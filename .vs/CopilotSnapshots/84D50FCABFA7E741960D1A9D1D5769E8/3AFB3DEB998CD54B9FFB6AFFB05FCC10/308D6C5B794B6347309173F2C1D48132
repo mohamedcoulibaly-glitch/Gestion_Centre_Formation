@@ -1,0 +1,41 @@
+﻿using System;
+using System.Windows.Forms;
+using CentreFormation.Services;
+
+namespace CentreFormation.Forms
+{
+    public partial class FormMain : Form
+    {
+        // Objet principal qui contient toutes les données
+        private GestionCentre gestionCentre = new GestionCentre();
+
+        public FormMain()
+        {
+            InitializeComponent();
+        }
+
+        private void InitializeComponent()
+        {
+            this.Text = "Gestion Centre Formation";
+            this.Width = 600;
+            this.Height = 400;
+            this.StartPosition = FormStartPosition.CenterScreen;
+
+            MenuStrip menu = new MenuStrip();
+            ToolStripMenuItem menuEtudiants = new ToolStripMenuItem("Étudiants");
+            ToolStripMenuItem menuFormateurs = new ToolStripMenuItem("Formateurs");
+            ToolStripMenuItem menuModules = new ToolStripMenuItem("Modules");
+            ToolStripMenuItem menuNotes = new ToolStripMenuItem("Notes");
+            ToolStripMenuItem menuStatistiques = new ToolStripMenuItem("Statistiques");
+
+            menu.Items.Add(menuEtudiants);
+            menu.Items.Add(menuFormateurs);
+            menu.Items.Add(menuModules);
+            menu.Items.Add(menuNotes);
+            menu.Items.Add(menuStatistiques);
+
+            this.MainMenuStrip = menu;
+            this.Controls.Add(menu);
+        }
+    }
+}

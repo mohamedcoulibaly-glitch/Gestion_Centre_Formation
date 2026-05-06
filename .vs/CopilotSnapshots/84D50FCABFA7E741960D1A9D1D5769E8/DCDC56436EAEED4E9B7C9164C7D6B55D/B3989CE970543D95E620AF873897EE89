@@ -1,0 +1,22 @@
+﻿// Placeholder: FormAjoutModule
+private void btnValider_Click(object sender, EventArgs e)
+{
+    try
+    {
+        Module nouveauModule = new Module(
+            txtCode.Text,
+            txtLibelle.Text,
+            (int)nudDuree.Value,
+            (int)nudCoefficient.Value
+        );
+
+        ModuleCree = nouveauModule;
+
+        DialogResult = DialogResult.OK;
+        Close();
+    }
+    catch (Exception ex)
+    {
+        MessageBox.Show(ex.Message, "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+    }
+}

@@ -1,0 +1,161 @@
+﻿using System;
+using System.Windows.Forms;
+using CentreFormation.Services;
+using CentreFormation.Forms;
+using CentreFormation.UI;
+
+namespace CentreFormation.Forms
+{
+    public partial class FormMain : Form
+    {
+        // Objet principal qui contient toutes les données
+        private GestionCentre gestionCentre = new GestionCentre();
+        private Panel sidebarPanel;
+        private Panel titleBarPanel;
+
+        public FormMain()
+        {
+            InitializeComponent();
+            ApplyModernTheme();
+        }
+
+        private void InitializeComponent()
+        {
+            // Configuration de la fenêtre
+            this.Text = "Gestion Centre Formation";
+            this.Width = 900;
+            this.Height = 600;
+            this.StartPosition = FormStartPosition.CenterScreen;
+            this.FormBorderStyle = FormBorderStyle.None;
+            this.BackColor = ThemeConfig.Colors.BackgroundMain;
+
+            // Barre de titre personnalisée (Edge-to-Edge)
+            titleBarPanel = new Panel
+            {
+                BackColor = ThemeConfig.Colors.Primary,
+                Height = 60,
+                Dock = DockStyle.Top
+            };
+
+            Label titleLabel = new Label
+            {
+                Text = "Gestion Centre Formation",
+                ForeColor = ThemeConfig.Colors.TextLight,
+                Font = ThemeConfig.Fonts.TitleFont,
+                Left = 20,
+                Top = 18,
+                AutoSize = true
+            };
+            titleBarPanel.Controls.Add(titleLabel);
+
+            // Bouton Fermer dans la barre de titre
+            Button closeBtn = new Button
+            {
+                Text = "✕",
+                BackColor = ThemeConfig.Colors.Primary,
+                ForeColor = ThemeConfig.Colors.TextLight,
+                FlatStyle = FlatStyle.Flat,
+                FlatAppearance = { BorderSize = 0 },
+                Width = 50,
+                Height = 60,
+                Dock = DockStyle.Right,
+                Cursor = Cursors.Hand,
+                Font = new System.Drawing.Font("Arial", 14, System.Drawing.FontStyle.Bold)
+            };
+            closeBtn.Click += (s, e) => this.Close();
+            closeBtn.MouseEnter += (s, e) => closeBtn.BackColor = System.Drawing.Color.FromArgb(200, ThemeConfig.Colors.Primary);
+            closeBtn.MouseLeave += (s, e) => closeBtn.BackColor = ThemeConfig.Colors.Primary;
+            titleBarPanel.Controls.Add(closeBtn);
+
+            this.Controls.Add(titleBarPanel);
+
+            // Panneau latéral de navigation (Sidebar)
+            sidebarPanel = new Panel
+            {
+                BackColor = ThemeConfig.Colors.SidebarDark,
+                Width = 220,
+                Dock = DockStyle.Left
+            };
+
+            // Titre du sidebar
+            Label sidebarTitle = new Label
+            {
+                Text = "MENU",
+                ForeColor = ThemeConfig.Colors.TextLight,
+                Font = ThemeConfig.Fonts.HeaderFont,
+                Left = 20,
+                Top = 20,
+                AutoSize = true
+            };
+            sidebarPanel.Controls.Add(sidebarTitle);
+
+            // Boutons de navigation avec spacing
+            int btnY = 70;
+            const int btnHeight = 45;
+            const int spacing = 10;
+
+            // Bouton Étudiants
+            Button btnEtudiants = CreateSidebarButton("👥 Étudiants", 20, btnY);
+            btnEtudiants.Click += (s, e) => new FormAjoutEtudiant(gestionCentre).ShowDialog();
+            sidebarPanel.Controls.Add(btnEtudiants);
+            btnY += btnHeight + spacing;
+
+            // Bouton Formateurs
+            Button btnFormateurs = CreateSidebarButton("🎓 Formateurs", 20, btnY);
+            btnFormateurs.Click += (s, e) => new FormAjoutFormateur().ShowDialog();
+            sidebarPanel.Controls.Add(btnFormateurs);
+            btnY += btnHeight + spacing;
+
+            // Bouton Modules
+            Button btnModules = CreateSidebarButton("📚 Modules", 20, btnY);
+            btnModules.Click += (s, e) => new FormAjoutModule().ShowDialog();
+            sidebarPanel.Controls.Add(btnModules);
+            btnY += btnHeight + spacing;
+
+            // Bouton Notes
+            Button btnNotes = CreateSidebarButton("📝 Notes", 20, btnY);
+            btnNotes.Click += (s, e) => new FormNotes(gestionCentre).ShowDialog();
+            sidebarPanel.Controls.Add(btnNotes);
+            btnY += btnHeight + spacing;
+
+            // Bouton Statistiques
+            Button btnStats = CreateSidebarButton("📊 Statistiques", 20, btnY);
+            btnStats.Click += (s, e) => new FormStatistiques(gestionCentre).ShowDialog();
+            sidebarPanel.Controls.Add(btnStats);
+
+            this.Controls.Add(sidebarPanel);
+        }
+
+        private Button CreateSidebarButton(string text, int left, int top)
+        {
+            Button btn = new Button
+            {
+                Text = text,
+                Left = left,
+                Top = top,
+                Width = 180,
+                Height = 45,
+                BackColor = ThemeConfig.Colors.SidebarDark,
+                ForeColor = ThemeConfig.Colors.TextLight,
+                FlatStyle = FlatStyle.Flat,
+                FlatAppearance = { BorderSize = 0 },
+                Font = ThemeConfig.Fonts.BoldFont,
+                Cursor = Cursors.Hand,
+                TextAlign = System.Drawing.ContentAlignment.MiddleLeft,
+                Padding = new Padding(15, 0, 0, 0)
+            };
+
+            btn.MouseEnter += (s, e) => btn.BackColor = ThemeConfig.Colors.Primary;
+            btn.MouseLeave += (s, e) => btn.BackColor = ThemeConfig.Colors.SidebarDark;
+
+            return btn;
+        }
+
+        private void ApplyModernTheme()
+        {
+            // Configuration globale de la fenêtre
+            this.BackColor = ThemeConfig.Colors.BackgroundMain;
+            this.Font = ThemeConfig.Fonts.DefaultFont;
+        }
+    }
+}

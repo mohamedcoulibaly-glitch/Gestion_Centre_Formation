@@ -1,0 +1,239 @@
+﻿using System; // Importation du namespace System
+using System.Windows.Forms; // Pour les formulaires Windows
+using System.Drawing; // Pour les couleurs et les polices
+using CentreFormation.Services; // Importation des services
+using CentreFormation.Models; // Importation des modèles
+using CentreFormation.UI; // Importation de la configuration de thème
+
+namespace CentreFormation.Forms // Namespace du projet
+{
+    public partial class FormAjoutFormateur : Form // Formulaire pour ajouter un formateur
+    {
+        private GestionCentre _gestion; // Référence à la gestion du centre
+        public Formateur FormateurCree { get; private set; } // Propriété pour le formateur créé
+
+        // Champs privés pour les contrôles du formulaire
+        private TextBox txtId = new TextBox(); // Champ texte pour l'ID
+        private TextBox txtNom = new TextBox(); // Champ texte pour le nom
+        private TextBox txtPrenom = new TextBox(); // Champ texte pour le prénom
+        private NumericUpDown nudAge = new NumericUpDown(); // Sélecteur numérique pour l'âge
+        private TextBox txtSpecialite = new TextBox(); // Champ texte pour la spécialité
+        private TextBox txtModule = new TextBox(); // Champ texte pour le module
+        private NumericUpDown nudSalaire = new NumericUpDown(); // Sélecteur numérique pour le salaire
+
+        public FormAjoutFormateur(GestionCentre gestion)
+        {
+            _gestion = gestion; // Initialise la référence à la gestion
+            InitializeComponent(); // Initialise les contrôles du formulaire
+            txtId.Text = _gestion.NouvelIdFormateur().ToString(); // Affiche le nouvel ID généré
+            txtId.ReadOnly = true; // Le champ est en lecture seule (ID auto-généré)
+        }
+
+        private void InitializeComponent()
+        {
+            this.Text = "Ajouter un formateur";
+            this.Width = 550;
+            this.Height = 550;
+            this.StartPosition = FormStartPosition.CenterScreen;
+            this.BackColor = ThemeConfig.Colors.BackgroundMain;
+            this.Font = ThemeConfig.Fonts.DefaultFont;
+
+            // Titre
+            Label lblTitle = new Label
+            {
+                Text = "Enregistrer un Nouveau Formateur",
+                Left = 20,
+                Top = 20,
+                Width = 400,
+                AutoSize = true
+            };
+            ThemeConfig.StyleLabelTitle(lblTitle);
+            this.Controls.Add(lblTitle);
+
+            // GroupBox pour les informations personnelles
+            GroupBox gbPersonnelles = new GroupBox
+            {
+                Text = "Informations Personnelles",
+                Left = 20,
+                Top = 60,
+                Width = 500,
+                Height = 180
+            };
+            ThemeConfig.StyleGroupBox(gbPersonnelles);
+
+            // ID
+            Label lblId = new Label { Text = "ID :", Left = 20, Top = 35, Width = 80, AutoSize = true };
+            lblId.Font = ThemeConfig.Fonts.DefaultFont;
+            txtId.Left = 130;
+            txtId.Top = 32;
+            txtId.Width = 340;
+            ThemeConfig.StyleTextBox(txtId);
+
+            // Nom
+            Label lblNom = new Label { Text = "Nom :", Left = 20, Top = 75, Width = 80, AutoSize = true };
+            lblNom.Font = ThemeConfig.Fonts.DefaultFont;
+            txtNom.Left = 130;
+            txtNom.Top = 72;
+            txtNom.Width = 340;
+            ThemeConfig.StyleTextBox(txtNom);
+
+            // Prénom
+            Label lblPrenom = new Label { Text = "Prénom :", Left = 20, Top = 115, Width = 80, AutoSize = true };
+            lblPrenom.Font = ThemeConfig.Fonts.DefaultFont;
+            txtPrenom.Left = 130;
+            txtPrenom.Top = 112;
+            txtPrenom.Width = 340;
+            ThemeConfig.StyleTextBox(txtPrenom);
+
+            // Âge
+            Label lblAge = new Label { Text = "Âge :", Left = 20, Top = 155, Width = 80, AutoSize = true };
+            lblAge.Font = ThemeConfig.Fonts.DefaultFont;
+            nudAge.Left = 130;
+            nudAge.Top = 152;
+            nudAge.Width = 340;
+            nudAge.Font = ThemeConfig.Fonts.DefaultFont;
+
+            gbPersonnelles.Controls.Add(lblId);
+            gbPersonnelles.Controls.Add(txtId);
+            gbPersonnelles.Controls.Add(lblNom);
+            gbPersonnelles.Controls.Add(txtNom);
+            gbPersonnelles.Controls.Add(lblPrenom);
+            gbPersonnelles.Controls.Add(txtPrenom);
+            gbPersonnelles.Controls.Add(lblAge);
+            gbPersonnelles.Controls.Add(nudAge);
+            this.Controls.Add(gbPersonnelles);
+
+            // GroupBox pour les informations professionnelles
+            GroupBox gbProfessionnelles = new GroupBox
+            {
+                Text = "Informations Professionnelles",
+                Left = 20,
+                Top = 250,
+                Width = 500,
+                Height = 180
+            };
+            ThemeConfig.StyleGroupBox(gbProfessionnelles);
+
+            // Spécialité
+            Label lblSpecialite = new Label { Text = "Spécialité :", Left = 20, Top = 35, Width = 80, AutoSize = true };
+            lblSpecialite.Font = ThemeConfig.Fonts.DefaultFont;
+            txtSpecialite.Left = 130;
+            txtSpecialite.Top = 32;
+            txtSpecialite.Width = 340;
+            ThemeConfig.StyleTextBox(txtSpecialite);
+
+            // Module
+            Label lblModule = new Label { Text = "Module :", Left = 20, Top = 75, Width = 80, AutoSize = true };
+            lblModule.Font = ThemeConfig.Fonts.DefaultFont;
+            txtModule.Left = 130;
+            txtModule.Top = 72;
+            txtModule.Width = 340;
+            ThemeConfig.StyleTextBox(txtModule);
+
+            // Salaire
+            Label lblSalaire = new Label { Text = "Salaire :", Left = 20, Top = 115, Width = 80, AutoSize = true };
+            lblSalaire.Font = ThemeConfig.Fonts.DefaultFont;
+            nudSalaire.Left = 130;
+            nudSalaire.Top = 112;
+            nudSalaire.Width = 340;
+            nudSalaire.Font = ThemeConfig.Fonts.DefaultFont;
+
+            gbProfessionnelles.Controls.Add(lblSpecialite);
+            gbProfessionnelles.Controls.Add(txtSpecialite);
+            gbProfessionnelles.Controls.Add(lblModule);
+            gbProfessionnelles.Controls.Add(txtModule);
+            gbProfessionnelles.Controls.Add(lblSalaire);
+            gbProfessionnelles.Controls.Add(nudSalaire);
+            this.Controls.Add(gbProfessionnelles);
+
+            // Boutons
+            Button btnValider = new Button { Text = "✓ Enregistrer", Left = 150, Top = 445, Width = 140 };
+            ThemeConfig.StyleButtonSuccess(btnValider);
+            btnValider.Click += btnValider_Click;
+
+            Button btnAnnuler = new Button { Text = "✕ Annuler", Left = 310, Top = 445, Width = 140 };
+            ThemeConfig.StyleButtonSecondary(btnAnnuler);
+            btnAnnuler.Click += (s, e) => this.Close();
+
+            this.Controls.Add(btnValider);
+            this.Controls.Add(btnAnnuler);
+        }
+
+        private void btnValider_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // Validation de l'ID
+                if (!int.TryParse(txtId.Text, out int id) || id <= 0)
+                {
+                    HighlightError(txtId, "L'ID doit être un nombre positif");
+                    return;
+                }
+
+                // Validation du nom
+                if (string.IsNullOrWhiteSpace(txtNom.Text))
+                {
+                    HighlightError(txtNom, "Le nom ne peut pas être vide");
+                    return;
+                }
+
+                // Validation du prénom
+                if (string.IsNullOrWhiteSpace(txtPrenom.Text))
+                {
+                    HighlightError(txtPrenom, "Le prénom ne peut pas être vide");
+                    return;
+                }
+
+                // Validation de l'âge
+                if (nudAge.Value < 0)
+                {
+                    HighlightError(nudAge, "L'âge ne peut pas être négatif");
+                    return;
+                }
+
+                // Validation de la spécialité
+                if (string.IsNullOrWhiteSpace(txtSpecialite.Text))
+                {
+                    HighlightError(txtSpecialite, "La spécialité ne peut pas être vide");
+                    return;
+                }
+
+                // Validation du module
+                if (string.IsNullOrWhiteSpace(txtModule.Text))
+                {
+                    HighlightError(txtModule, "Le module ne peut pas être vide");
+                    return;
+                }
+
+                Formateur nouveauFormateur = new Formateur(
+                    _gestion.NouvelIdFormateur(),
+                    txtNom.Text,
+                    txtPrenom.Text,
+                    (int)nudAge.Value,
+                    txtSpecialite.Text,
+                    txtModule.Text,
+                    nudSalaire.Value
+                );
+
+                _gestion.AjouterFormateur(nouveauFormateur);
+                FormateurCree = nouveauFormateur;
+
+                MessageBox.Show("Formateur enregistré avec succès !", "Succès", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                DialogResult = DialogResult.OK;
+                Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void HighlightError(Control control, string message)
+        {
+            control.BackColor = ThemeConfig.Colors.Warning;
+            MessageBox.Show(message, "Validation", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            control.BackColor = Color.White;
+            control.Focus();
+        }
+    }
+}

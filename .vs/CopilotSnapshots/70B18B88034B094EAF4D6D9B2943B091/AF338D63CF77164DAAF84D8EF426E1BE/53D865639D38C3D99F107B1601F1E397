@@ -1,0 +1,80 @@
+﻿using System;
+using System.Windows.Forms;
+using CentreFormation.Models;
+using CentreFormation.Services;
+
+namespace CentreFormation.Forms
+{
+    public partial class FormNotes : Form
+    {
+        private GestionCentre gestionCentre;
+
+        // Placeholder controls
+        private ComboBox cmbEtudiants = new ComboBox();
+        private ComboBox cmbModules = new ComboBox();
+        private NumericUpDown nudNote = new NumericUpDown();
+
+        public FormNotes(GestionCentre gestion)
+        {
+            gestionCentre = gestion;
+            InitializeComponent();
+        }
+
+        private void InitializeComponent()
+        {
+            this.Text = "Ajouter une note";
+            this.Width = 400;
+            this.Height = 250;
+            this.StartPosition = FormStartPosition.CenterScreen;
+
+            Label lblEtudiant = new Label { Text = "Étudiant :", Left = 10, Top = 20, Width = 80 };
+            cmbEtudiants.Left = 100;
+            cmbEtudiants.Top = 20;
+            cmbEtudiants.Width = 250;
+
+            Label lblModule = new Label { Text = "Module :", Left = 10, Top = 50, Width = 80 };
+            cmbModules.Left = 100;
+            cmbModules.Top = 50;
+            cmbModules.Width = 250;
+
+            Label lblNote = new Label { Text = "Note :", Left = 10, Top = 80, Width = 80 };
+            nudNote.Left = 100;
+            nudNote.Top = 80;
+            nudNote.Width = 250;
+
+            Button btnAjouter = new Button { Text = "Ajouter", Left = 100, Top = 150, Width = 100 };
+            btnAjouter.Click += btnAjouterNote_Click;
+
+            this.Controls.Add(lblEtudiant);
+            this.Controls.Add(cmbEtudiants);
+            this.Controls.Add(lblModule);
+            this.Controls.Add(cmbModules);
+            this.Controls.Add(lblNote);
+            this.Controls.Add(nudNote);
+            this.Controls.Add(btnAjouter);
+        }
+
+        private void btnAjouterNote_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Etudiant etudiantChoisi = (Etudiant)cmbEtudiants.SelectedItem;
+                Module moduleChoisi = (Module)cmbModules.SelectedItem;
+
+                Note note = new Note(
+                    etudiantChoisi,
+                    moduleChoisi,
+                    (double)nudNote.Value
+                );
+
+                gestionCentre.AjouterNote(note);
+
+                MessageBox.Show("Note ajoutée avec succès.");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+    }
+}

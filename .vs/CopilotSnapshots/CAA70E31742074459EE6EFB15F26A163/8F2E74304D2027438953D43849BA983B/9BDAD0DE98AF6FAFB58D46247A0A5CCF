@@ -1,0 +1,167 @@
+﻿// Placeholder: logique applicative GestionCentre
+using System.Collections.Generic;
+using System.Linq;
+using CentreFormation.Models;
+
+namespace CentreFormation.Services
+{
+    /// <summary>
+    /// Classe principale gérant la logique métier du centre de formation.
+    /// Elle assure la liaison entre les modèles de données et la persistance.
+    /// </summary>
+    public class GestionCentre
+    {
+        // Propriétés stockant les listes d'entités en mémoire
+        public List<Etudiant> Etudiants { get; set; } = new();
+        public List<Formateur> Formateurs { get; set; } = new();
+        public List<Module> Modules { get; set; } = new();
+        public List<Note> Notes { get; set; } = new();
+
+        /// <summary>
+        /// Constructeur : Initialise les listes en chargeant les données via la classe Sauvegarde.
+        /// </summary>
+        public GestionCentre()
+        {
+            Etudiants = Sauvegarde.ChargerEtudiants();
+            Formateurs = Sauvegarde.ChargerFormateurs();
+            Modules = Sauvegarde.ChargerModules();
+            Notes = Sauvegarde.ChargerNotes(Etudiants, Modules);
+        }
+
+        /// <summary>
+        /// Ajoute un étudiant à la liste et met à jour la sauvegarde persistante.
+        /// </summary>
+        public void AjouterEtudiant(Etudiant etudiant)
+        {
+            Etudiants.Add(etudiant);
+            Sauvegarde.SauvegarderEtudiants(Etudiants);
+        }
+
+        /// <summary>
+        /// Modifie un étudiant existant et met à jour la sauvegarde.
+        /// </summary>
+        public void ModifierEtudiant(Etudiant etudiant)
+        {
+            var existing = Etudiants.FirstOrDefault(e => e.Id == etudiant.Id);
+            if (existing != null)
+            {
+                existing.Nom = etudiant.Nom;
+                existing.Prenom = etudiant.Prenom;
+                existing.Age = etudiant.Age;
+                existing.Matricule = etudiant.Matricule;
+                existing.Niveau = etudiant.Niveau;
+                Sauvegarde.SauvegarderEtudiants(Etudiants);
+            }
+        }
+
+        /// <summary>
+        /// Supprime un étudiant et met à jour la sauvegarde.
+        /// </summary>
+        public void SupprimerEtudiant(int idEtudiant)
+        {
+            var etudiant = Etudiants.FirstOrDefault(e => e.Id == idEtudiant);
+            if (etudiant != null)
+            {
+                Etudiants.Remove(etudiant);
+                Sauvegarde.SauvegarderEtudiants(Etudiants);
+            }
+        }
+
+        /// <summary>
+        /// Génère un nouvel identifiant unique pour un étudiant basé sur l'ID maximum existant.
+        /// </summary>
+        public int NouvelIdEtudiant()
+        {
+            return Etudiants.Count > 0 ? Etudiants.Max(e => e.Id) + 1 : 1;
+        }
+
+        /// <summary>
+        /// Ajoute un formateur à la liste et met à jour la sauvegarde persistante.
+        /// </summary>
+        public void AjouterFormateur(Formateur formateur)
+        {
+            Formateurs.Add(formateur);
+            Sauvegarde.SauvegarderFormateurs(Formateurs);
+        }
+
+        /// <summary>
+        /// Modifie un formateur existant.
+        /// </summary>
+        public void ModifierFormateur(Formateur formateur)
+        {
+            var existing = Formateurs.FirstOrDefault(f => f.Id == formateur.Id);
+            if (existing != null)
+            {
+                existing.Nom = formateur.Nom;
+                existing.Prenom = formateur.Prenom;
+                existing.Age = formateur.Age;
+                existing.Specialite = formateur.Specialite;
+                existing.Salaire = formateur.Salaire;
+                Sauvegarde.SauvegarderFormateurs(Formateurs);
+            }
+        }
+
+        /// <summary>
+        /// Supprime un formateur.
+        /// </summary>
+        public void SupprimerFormateur(int idFormateur)
+        {
+            var formateur = Formateurs.FirstOrDefault(f => f.Id == idFormateur);
+            if (formateur != null)
+            {
+                Formateurs.Remove(formateur);
+                Sauvegarde.SauvegarderFormateurs(Formateurs);
+            }
+        }
+
+        /// <summary>
+        /// Génère un nouvel identifiant unique pour un formateur.
+        /// </summary>
+        public int NouvelIdFormateur()
+        {
+            return Formateurs.Count > 0 ? Formateurs.Max(f => f.Id) + 1 : 1;
+        }
+
+        /// <summary>
+        /// Ajoute un module de formation et synchronise la sauvegarde.
+        /// </summary>
+        public void AjouterModule(Module module)
+        {
+            Modules.Add(module);
+            Sauvegarde.SauvegarderModules(Modules);
+        }
+
+        /// <summary>
+        /// Enregistre une note, l'associe à l'objet étudiant concerné et sauvegarde.
+        /// </summary>
+        public void AjouterNote(Note note)
+        {
+            Notes.Add(note);
+            // also attach note to the student
+            note.Etudiant?.AjouterNote(note);
+            Sauvegarde.SauvegarderNotes(Notes);
+        }
+
+        /// <summary>
+        /// Calcule la moyenne de l'ensemble des étudiants du centre.
+        /// </summary>
+        public double MoyenneGenerale()
+        {
+            if (Etudiants.Count == 0)
+                return 0;
+
+            return Etudiants.Average(e => e.CalculerMoyenne());
+        }
+
+        /// <summary>
+        /// Identifie l'étudiant ayant la moyenne la plus élevée.
+        /// </summary>
+        public Etudiant? MeilleurEtudiant()
+        {
+            if (Etudiants.Count == 0)
+                return null;
+
+            return Etudiants.OrderByDescending(e => e.CalculerMoyenne()).FirstOrDefault();
+        }
+    }
+}

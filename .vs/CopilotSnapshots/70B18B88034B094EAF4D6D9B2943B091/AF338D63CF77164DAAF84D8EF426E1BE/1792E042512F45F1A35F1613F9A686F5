@@ -1,0 +1,112 @@
+﻿using System;
+using System.Windows.Forms;
+using CentreFormation.Models;
+
+namespace CentreFormation.Forms
+{
+    public partial class FormAjoutFormateur : Form
+    {
+        public Formateur FormateurCree { get; private set; }
+
+        // Placeholder controls
+        private TextBox txtId = new TextBox();
+        private TextBox txtNom = new TextBox();
+        private TextBox txtPrenom = new TextBox();
+        private NumericUpDown nudAge = new NumericUpDown();
+        private TextBox txtSpecialite = new TextBox();
+        private TextBox txtModule = new TextBox();
+        private NumericUpDown nudSalaire = new NumericUpDown();
+
+        public FormAjoutFormateur()
+        {
+            InitializeComponent();
+        }
+
+        private void InitializeComponent()
+        {
+            this.Text = "Ajouter un formateur";
+            this.Width = 400;
+            this.Height = 350;
+            this.StartPosition = FormStartPosition.CenterScreen;
+
+            Label lblId = new Label { Text = "ID :", Left = 10, Top = 20, Width = 80 };
+            txtId.Left = 100;
+            txtId.Top = 20;
+            txtId.Width = 250;
+
+            Label lblNom = new Label { Text = "Nom :", Left = 10, Top = 50, Width = 80 };
+            txtNom.Left = 100;
+            txtNom.Top = 50;
+            txtNom.Width = 250;
+
+            Label lblPrenom = new Label { Text = "Prénom :", Left = 10, Top = 80, Width = 80 };
+            txtPrenom.Left = 100;
+            txtPrenom.Top = 80;
+            txtPrenom.Width = 250;
+
+            Label lblAge = new Label { Text = "Âge :", Left = 10, Top = 110, Width = 80 };
+            nudAge.Left = 100;
+            nudAge.Top = 110;
+            nudAge.Width = 250;
+
+            Label lblSpecialite = new Label { Text = "Spécialité :", Left = 10, Top = 140, Width = 80 };
+            txtSpecialite.Left = 100;
+            txtSpecialite.Top = 140;
+            txtSpecialite.Width = 250;
+
+            Label lblModule = new Label { Text = "Module :", Left = 10, Top = 170, Width = 80 };
+            txtModule.Left = 100;
+            txtModule.Top = 170;
+            txtModule.Width = 250;
+
+            Label lblSalaire = new Label { Text = "Salaire :", Left = 10, Top = 200, Width = 80 };
+            nudSalaire.Left = 100;
+            nudSalaire.Top = 200;
+            nudSalaire.Width = 250;
+
+            Button btnValider = new Button { Text = "Valider", Left = 100, Top = 260, Width = 100 };
+            btnValider.Click += btnValider_Click;
+
+            this.Controls.Add(lblId);
+            this.Controls.Add(txtId);
+            this.Controls.Add(lblNom);
+            this.Controls.Add(txtNom);
+            this.Controls.Add(lblPrenom);
+            this.Controls.Add(txtPrenom);
+            this.Controls.Add(lblAge);
+            this.Controls.Add(nudAge);
+            this.Controls.Add(lblSpecialite);
+            this.Controls.Add(txtSpecialite);
+            this.Controls.Add(lblModule);
+            this.Controls.Add(txtModule);
+            this.Controls.Add(lblSalaire);
+            this.Controls.Add(nudSalaire);
+            this.Controls.Add(btnValider);
+        }
+
+        private void btnValider_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Formateur nouveauFormateur = new Formateur(
+                    int.Parse(txtId.Text),
+                    txtNom.Text,
+                    txtPrenom.Text,
+                    (int)nudAge.Value,
+                    txtSpecialite.Text,
+                    txtModule.Text,
+                    nudSalaire.Value
+                );
+
+                FormateurCree = nouveauFormateur;
+
+                DialogResult = DialogResult.OK;
+                Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+    }
+}

@@ -1,0 +1,195 @@
+﻿using System;
+using System.Windows.Forms;
+using System.Drawing;
+using CentreFormation.Services;
+using CentreFormation.Models;
+using CentreFormation.UI;
+
+namespace CentreFormation.Forms
+{
+    public partial class FormStatistiques : Form
+    {
+        private GestionCentre gestionCentre = null!;
+
+        // Placeholder labels
+        private Label lblNbEtudiants = new Label();
+        private Label lblNbFormateurs = new Label();
+        private Label lblNbModules = new Label();
+        private Label lblMoyenneGenerale = new Label();
+        private Label lblMeilleurEtudiant = new Label();
+
+        public FormStatistiques(GestionCentre gestion)
+        {
+            gestionCentre = gestion;
+            InitializeComponent();
+        }
+
+        private void InitializeComponent()
+        {
+            this.Text = "Statistiques du Centre";
+            this.Width = 700;
+            this.Height = 600;
+            this.StartPosition = FormStartPosition.CenterScreen;
+            this.BackColor = ThemeConfig.Colors.BackgroundMain;
+            this.Font = ThemeConfig.Fonts.DefaultFont;
+
+            // Titre principal
+            Label lblTitle = new Label
+            {
+                Text = "📊 Statistiques Globales",
+                Left = 20,
+                Top = 20,
+                Width = 600,
+                AutoSize = true
+            };
+            ThemeConfig.StyleLabelTitle(lblTitle);
+            this.Controls.Add(lblTitle);
+
+            // --- CARD 1: Nombre d'Étudiants ---
+            Panel cardEtudiants = CreateStatCard(
+                "👥 Étudiants",
+                "Nombre d'étudiants inscrits",
+                20, 70,
+                ThemeConfig.Colors.Primary,
+                lblNbEtudiants
+            );
+            this.Controls.Add(cardEtudiants);
+
+            // --- CARD 2: Nombre de Formateurs ---
+            Panel cardFormateurs = CreateStatCard(
+                "🎓 Formateurs",
+                "Nombre de formateurs actifs",
+                380, 70,
+                ThemeConfig.Colors.Warning,
+                lblNbFormateurs
+            );
+            this.Controls.Add(cardFormateurs);
+
+            // --- CARD 3: Nombre de Modules ---
+            Panel cardModules = CreateStatCard(
+                "📚 Modules",
+                "Nombre de modules proposés",
+                20, 220,
+                ThemeConfig.Colors.Success,
+                lblNbModules
+            );
+            this.Controls.Add(cardModules);
+
+            // --- CARD 4: Moyenne Générale ---
+            Panel cardMoyenne = CreateStatCard(
+                "📈 Moyenne",
+                "Moyenne générale de la promotion",
+                380, 220,
+                ThemeConfig.Colors.Primary,
+                lblMoyenneGenerale
+            );
+            this.Controls.Add(cardMoyenne);
+
+            // --- CARD 5: Meilleur Étudiant (Full Width) ---
+            Panel cardMeilleur = CreateStatCard(
+                "⭐ Meilleur Étudiant",
+                "Performance académique exceptionnelle",
+                20, 370,
+                ThemeConfig.Colors.Success,
+                lblMeilleurEtudiant,
+                true
+            );
+            this.Controls.Add(cardMeilleur);
+
+            this.Load += FormStatistiques_Load;
+        }
+
+        private Panel CreateStatCard(string title, string subtitle, int left, int top, Color accentColor, Label contentLabel, bool fullWidth = false)
+        {
+            Panel card = new Panel
+            {
+                Left = left,
+                Top = top,
+                Width = fullWidth ? 640 : 300,
+                Height = 120,
+                BackColor = Color.White,
+                BorderStyle = BorderStyle.FixedSingle
+            };
+
+            // Bande d'accentuation gauche
+            Panel accentBar = new Panel
+            {
+                Left = 0,
+                Top = 0,
+                Width = 5,
+                Height = card.Height,
+                BackColor = accentColor,
+                Dock = DockStyle.Left
+            };
+            card.Controls.Add(accentBar);
+
+            // Titre
+            Label lblCardTitle = new Label
+            {
+                Text = title,
+                Left = 20,
+                Top = 10,
+                Width = 300,
+                AutoSize = true,
+                Font = ThemeConfig.Fonts.HeaderFont,
+                ForeColor = ThemeConfig.Colors.TextDark
+            };
+            card.Controls.Add(lblCardTitle);
+
+            // Sous-titre
+            Label lblCardSubtitle = new Label
+            {
+                Text = subtitle,
+                Left = 20,
+                Top = 35,
+                Width = 300,
+                Font = new Font(ThemeConfig.Fonts.DefaultFontName, 9),
+                ForeColor = ThemeConfig.Colors.TextSecondary,
+                AutoSize = true
+            };
+            card.Controls.Add(lblCardSubtitle);
+
+            // Contenu (valeur)
+            contentLabel.Left = 20;
+            contentLabel.Top = 60;
+            contentLabel.Width = 300;
+            contentLabel.AutoSize = true;
+            contentLabel.Font = new Font(ThemeConfig.Fonts.DefaultFontName, 16, FontStyle.Bold);
+            contentLabel.ForeColor = accentColor;
+            card.Controls.Add(contentLabel);
+
+            return card;
+        }
+
+        private void FormStatistiques_Load(object? sender, EventArgs e)
+        {
+            // Nombre d'étudiants
+            lblNbEtudiants.Text = gestionCentre.Etudiants.Count.ToString();
+
+            // Nombre de formateurs
+            lblNbFormateurs.Text = gestionCentre.Formateurs.Count.ToString();
+
+            // Nombre de modules
+            lblNbModules.Text = gestionCentre.Modules.Count.ToString();
+
+            // Moyenne générale
+            double moyenne = gestionCentre.MoyenneGenerale();
+            lblMoyenneGenerale.Text = moyenne.ToString("0.00") + " / 20";
+
+            // Meilleur étudiant
+            Etudiant meilleur = gestionCentre.MeilleurEtudiant();
+
+            if (meilleur != null)
+            {
+                lblMeilleurEtudiant.Text = meilleur.Nom + " " + meilleur.Prenom +
+                                            " • Moyenne : " + meilleur.CalculerMoyenne().ToString("0.00");
+                lblMeilleurEtudiant.ForeColor = ThemeConfig.Colors.Success;
+            }
+            else
+            {
+                lblMeilleurEtudiant.Text = "Aucun étudiant pour le moment";
+                lblMeilleurEtudiant.ForeColor = ThemeConfig.Colors.NeutralGray;
+            }
+        }
+    }
+}

@@ -1,0 +1,171 @@
+﻿using System; // Importation du namespace System
+using System.Windows.Forms; // Pour les formulaires Windows
+using CentreFormation.Services; // Importation des services
+using System.Drawing; // Pour les couleurs et les polices
+using CentreFormation.Models; // Importation des modèles
+using CentreFormation.UI; // Importation de la configuration de thème
+
+namespace CentreFormation.Forms // Namespace du projet
+{
+    public partial class FormAjoutModule : Form // Formulaire pour ajouter un module
+    {
+        private GestionCentre _gestion; // Référence à la gestion du centre
+        public Module ModuleCree { get; private set; } // Propriété pour le module créé
+
+        // Champs privés pour les contrôles du formulaire
+        private TextBox txtCode = new TextBox(); // Champ texte pour le code
+        private TextBox txtLibelle = new TextBox(); // Champ texte pour le libellé
+        private NumericUpDown nudDuree = new NumericUpDown(); // Sélecteur numérique pour la durée
+        private NumericUpDown nudCoefficient = new NumericUpDown(); // Sélecteur numérique pour le coefficient
+
+        public FormAjoutModule(GestionCentre gestion)
+        {
+            _gestion = gestion; // Initialise la référence à la gestion
+            InitializeComponent(); // Initialise les contrôles du formulaire
+        }
+
+        private void InitializeComponent()
+        {
+            this.Text = "Ajouter un module"; // Titre du formulaire
+            this.Width = 500; // Largeur du formulaire
+            this.Height = 400; // Hauteur du formulaire
+            this.StartPosition = FormStartPosition.CenterScreen; // Centre le formulaire à l'écran
+            this.BackColor = ThemeConfig.Colors.BackgroundMain; // Applique la couleur de fond
+            this.Font = ThemeConfig.Fonts.DefaultFont; // Applique la police par défaut
+
+            // Créé et configure le label du titre
+            Label lblTitle = new Label
+            {
+                Text = "Créer un Nouveau Module", // Texte du titre
+                Left = 20, // Position horizontale
+                Top = 20, // Position verticale
+                Width = 400, // Largeur
+                AutoSize = true // Ajuste automatiquement la taille
+            };
+            ThemeConfig.StyleLabelTitle(lblTitle); // Applique le style de titre
+            this.Controls.Add(lblTitle); // Ajoute le label au formulaire
+
+            // Crée le groupe pour les informations du module
+            GroupBox gbModule = new GroupBox
+            {
+                Text = "Informations du Module", // Titre du groupe
+                Left = 20, // Position horizontale
+                Top = 60, // Position verticale
+                Width = 450, // Largeur
+                Height = 220 // Hauteur
+            };
+            ThemeConfig.StyleGroupBox(gbModule); // Applique le style de groupe
+
+            // Crée le label et le champ texte pour le code
+            Label lblCode = new Label { Text = "Code :", Left = 20, Top = 35, Width = 80, AutoSize = true }; // Label du code
+            lblCode.Font = ThemeConfig.Fonts.DefaultFont; // Applique la police
+            txtCode.Left = 130; // Position horizontale
+            txtCode.Top = 32; // Position verticale
+            txtCode.Width = 280; // Largeur du champ
+            ThemeConfig.StyleTextBox(txtCode); // Applique le style de champ texte
+
+            // Crée le label et le champ texte pour le libellé
+            Label lblLibelle = new Label { Text = "Libellé :", Left = 20, Top = 75, Width = 80, AutoSize = true }; // Label du libellé
+            lblLibelle.Font = ThemeConfig.Fonts.DefaultFont; // Applique la police
+            txtLibelle.Left = 130; // Position horizontale
+            txtLibelle.Top = 72; // Position verticale
+            txtLibelle.Width = 280; // Largeur du champ
+            ThemeConfig.StyleTextBox(txtLibelle); // Applique le style de champ texte
+
+            // Crée le label et le sélecteur numérique pour la durée
+            Label lblDuree = new Label { Text = "Durée (h) :", Left = 20, Top = 115, Width = 80, AutoSize = true }; // Label de la durée
+            lblDuree.Font = ThemeConfig.Fonts.DefaultFont; // Applique la police
+            nudDuree.Left = 130; // Position horizontale
+            nudDuree.Top = 112; // Position verticale
+            nudDuree.Width = 280; // Largeur du sélecteur
+            nudDuree.Font = ThemeConfig.Fonts.DefaultFont; // Applique la police
+
+            // Crée le label et le sélecteur numérique pour le coefficient
+            Label lblCoefficient = new Label { Text = "Coefficient :", Left = 20, Top = 155, Width = 80, AutoSize = true }; // Label du coefficient
+            lblCoefficient.Font = ThemeConfig.Fonts.DefaultFont; // Applique la police
+            nudCoefficient.Left = 130; // Position horizontale
+            nudCoefficient.Top = 152; // Position verticale
+            nudCoefficient.Width = 280; // Largeur du sélecteur
+            nudCoefficient.Font = ThemeConfig.Fonts.DefaultFont; // Applique la police
+
+            // Ajoute tous les contrôles au groupe
+            gbModule.Controls.Add(lblCode); // Ajoute le label du code
+            gbModule.Controls.Add(txtCode); // Ajoute le champ texte du code
+            gbModule.Controls.Add(lblLibelle); // Ajoute le label du libellé
+            gbModule.Controls.Add(txtLibelle); // Ajoute le champ texte du libellé
+            gbModule.Controls.Add(lblDuree); // Ajoute le label de la durée
+            gbModule.Controls.Add(nudDuree); // Ajoute le sélecteur de durée
+            gbModule.Controls.Add(lblCoefficient); // Ajoute le label du coefficient
+            gbModule.Controls.Add(nudCoefficient); // Ajoute le sélecteur de coefficient
+            this.Controls.Add(gbModule); // Ajoute le groupe au formulaire
+
+            // Crée et configure le bouton de validation
+            Button btnValider = new Button { Text = "✓ Créer le Module", Left = 130, Top = 305, Width = 150 }; // Bouton Valider
+            ThemeConfig.StyleButtonSuccess(btnValider); // Applique le style succès (vert)
+            btnValider.Click += btnValider_Click; // Associe l'événement de clic
+
+            // Crée et configure le bouton d'annulation
+            Button btnAnnuler = new Button { Text = "✕ Annuler", Left = 300, Top = 305, Width = 150 }; // Bouton Annuler
+            ThemeConfig.StyleButtonSecondary(btnAnnuler); // Applique le style secondaire (gris)
+            btnAnnuler.Click += (s, e) => this.Close(); // Ferme le formulaire au clic
+
+            // Ajoute les boutons au formulaire
+            this.Controls.Add(btnValider); // Ajoute le bouton Valider
+            this.Controls.Add(btnAnnuler); // Ajoute le bouton Annuler
+        }
+
+        private void btnValider_Click(object sender, EventArgs e)
+        {
+            try // Commence un bloc de gestion d'erreur
+            {
+                // Valide que le code n'est pas vide
+                if (string.IsNullOrWhiteSpace(txtCode.Text))
+                {
+                    HighlightError(txtCode, "Le code ne peut pas être vide"); // Affiche une erreur
+                    return; // Arrête l'exécution
+                }
+
+                // Valide que le libellé n'est pas vide
+                if (string.IsNullOrWhiteSpace(txtLibelle.Text))
+                {
+                    HighlightError(txtLibelle, "Le libellé ne peut pas être vide"); // Affiche une erreur
+                    return; // Arrête l'exécution
+                }
+
+                // Valide que la durée est positive
+                if (nudDuree.Value <= 0)
+                {
+                    HighlightError(nudDuree, "La durée doit être positive"); // Affiche une erreur
+                    return; // Arrête l'exécution
+                }
+
+                // Crée un nouvel objet Module avec les données saisies
+                Module nouveauModule = new Module(
+                    txtCode.Text, // Code du module
+                    txtLibelle.Text, // Libellé du module
+                    (int)nudDuree.Value, // Durée du module
+                    (int)nudCoefficient.Value // Coefficient du module
+                );
+
+                _gestion.AjouterModule(nouveauModule); // Ajoute le module à la gestion
+                ModuleCree = nouveauModule; // Stocke le module créé
+
+                MessageBox.Show("Module créé avec succès !", "Succès", MessageBoxButtons.OK, MessageBoxIcon.Information); // Affiche un message de succès
+                DialogResult = DialogResult.OK; // Définit le résultat du dialogue
+                Close(); // Ferme le formulaire
+            }
+            catch (Exception ex) // Capture les exceptions
+            {
+                MessageBox.Show(ex.Message, "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error); // Affiche le message d'erreur
+            }
+        }
+
+        private void HighlightError(Control control, string message)
+        {
+            control.BackColor = ThemeConfig.Colors.Warning; // Change la couleur de fond du contrôle en jaune
+            MessageBox.Show(message, "Validation", MessageBoxButtons.OK, MessageBoxIcon.Warning); // Affiche le message d'erreur
+            control.BackColor = Color.White; // Remet la couleur de fond à blanc
+            control.Focus(); // Donne le focus au contrôle
+        }
+    }
+}

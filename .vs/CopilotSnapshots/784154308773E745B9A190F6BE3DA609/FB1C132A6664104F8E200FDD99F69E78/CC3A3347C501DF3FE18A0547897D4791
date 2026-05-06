@@ -1,0 +1,18 @@
+﻿// Placeholder: point d'entrée minimal
+using System;
+using System.Windows.Forms;
+using CentreFormation.Forms;
+
+namespace CentreFormation
+{
+    internal static class Program
+    {
+        [STAThread]
+        static void Main()
+        {
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.Run(new FormMain());
+        }
+    }
+}

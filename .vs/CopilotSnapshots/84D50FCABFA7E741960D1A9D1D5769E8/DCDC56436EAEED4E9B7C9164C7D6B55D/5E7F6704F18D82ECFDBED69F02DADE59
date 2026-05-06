@@ -1,0 +1,49 @@
+﻿using System;
+using System.Windows.Forms;
+using CentreFormation.Models;
+
+namespace CentreFormation.Forms
+{
+    public partial class FormAjoutModule : Form
+    {
+        public Module ModuleCree { get; private set; }
+
+        // Placeholder controls
+        private TextBox txtCode = new TextBox();
+        private TextBox txtLibelle = new TextBox();
+        private NumericUpDown nudDuree = new NumericUpDown();
+        private NumericUpDown nudCoefficient = new NumericUpDown();
+
+        public FormAjoutModule()
+        {
+            InitializeComponent();
+        }
+
+        private void InitializeComponent()
+        {
+            this.Text = "Ajouter un module";
+        }
+
+        private void btnValider_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Module nouveauModule = new Module(
+                    txtCode.Text,
+                    txtLibelle.Text,
+                    (int)nudDuree.Value,
+                    (int)nudCoefficient.Value
+                );
+
+                ModuleCree = nouveauModule;
+
+                DialogResult = DialogResult.OK;
+                Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+    }
+}

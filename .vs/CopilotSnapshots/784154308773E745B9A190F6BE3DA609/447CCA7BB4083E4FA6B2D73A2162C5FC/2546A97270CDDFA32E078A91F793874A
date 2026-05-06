@@ -1,0 +1,51 @@
+﻿// Placeholder: classe métier 'Personne'
+using System;
+
+namespace CentreFormation.Models
+{
+    public class Personne
+    {
+        private int _age;
+
+        // Compteur statique
+        private static int _nombreTotal = 0;
+
+        public int Id { get; set; }
+        public string Nom { get; set; }
+        public string Prenom { get; set; }
+
+        public int Age
+        {
+            get { return _age; }
+            set
+            {
+                if (value < 0)
+                {
+                    throw new ArgumentException("L'âge ne peut pas être négatif.");
+                }
+
+                _age = value;
+            }
+        }
+
+        public static int NombreTotal
+        {
+            get { return _nombreTotal; }
+        }
+
+        public Personne(int id, string nom, string prenom, int age)
+        {
+            Id = id;
+            Nom = nom;
+            Prenom = prenom;
+            Age = age;
+
+            _nombreTotal++;
+        }
+
+        public virtual string AfficherDetails()
+        {
+            return $"ID : {Id} - {Nom} {Prenom} - Age : {Age}";
+        }
+    }
+}

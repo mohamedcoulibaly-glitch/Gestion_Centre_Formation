@@ -1,0 +1,22 @@
+﻿using System;
+using System.Windows.Forms;
+using CentreFormation.Services;
+
+namespace CentreFormation.Forms
+{
+    public partial class FormMain : Form
+    {
+        // Objet principal qui contient toutes les données
+        private GestionCentre gestionCentre = new GestionCentre();
+
+        public FormMain()
+        {
+            InitializeComponent();
+        }
+
+        private void InitializeComponent()
+        {
+            this.Text = "Gestion Centre Formation";
+        }
+    }
+}

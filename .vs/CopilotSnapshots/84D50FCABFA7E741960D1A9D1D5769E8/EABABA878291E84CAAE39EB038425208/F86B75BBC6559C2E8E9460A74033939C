@@ -1,0 +1,63 @@
+﻿using System;
+using System.Windows.Forms;
+using CentreFormation.Services;
+using CentreFormation.Models;
+
+namespace CentreFormation.Forms
+{
+    public partial class FormAjoutEtudiant : Form
+    {
+        private GestionCentre _gestion;
+        public Etudiant EtudiantCree { get; private set; }
+
+        // Minimal controls used by the handlers (placeholders)
+        private TextBox txtNom = new TextBox();
+        private TextBox txtPrenom = new TextBox();
+        private NumericUpDown nudAge = new NumericUpDown();
+        private TextBox txtMatricule = new TextBox();
+        private ComboBox cboNiveau = new ComboBox();
+
+        public FormAjoutEtudiant(GestionCentre gestion)
+        {
+            _gestion = gestion;
+            InitializeComponent();
+        }
+
+        private void InitializeComponent()
+        {
+            // Minimal initialization so the form can be instantiated in runtime
+            this.Text = "Ajouter un étudiant";
+        }
+
+        private void btnValider_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Etudiant nouvelEtudiant = new Etudiant(
+                    (_gestion != null) ? (_gestion.Etudiants.Count > 0 ? _gestion.Etudiants.Count + 1 : 1) : 0,
+                    txtNom.Text,
+                    txtPrenom.Text,
+                    (int)nudAge.Value,
+                    txtMatricule.Text,
+                    cboNiveau.SelectedItem != null ? cboNiveau.SelectedItem.ToString() : string.Empty
+                );
+
+                _gestion?.AjouterEtudiant(nouvelEtudiant);
+                EtudiantCree = nouvelEtudiant;
+
+                DialogResult = DialogResult.OK;
+                Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btnAnnuler_Click(object sender, EventArgs e)
+        {
+            DialogResult = DialogResult.Cancel;
+            Close();
+        }
+    }
+}

@@ -1,0 +1,171 @@
+﻿using System;
+using System.Windows.Forms;
+using System.Drawing;
+using CentreFormation.Models;
+using CentreFormation.Services;
+using CentreFormation.UI;
+
+namespace CentreFormation.Forms
+{
+    public partial class FormNotes : Form
+    {
+        private GestionCentre gestionCentre = null!;
+
+        // Placeholder controls
+        private ComboBox cmbEtudiants = new ComboBox();
+        private ComboBox cmbModules = new ComboBox();
+        private NumericUpDown nudNote = new NumericUpDown();
+
+        public FormNotes(GestionCentre gestion)
+        {
+            gestionCentre = gestion;
+            InitializeComponent();
+        }
+
+        private void InitializeComponent()
+        {
+            this.Text = "Enregistrer une Note";
+            this.Width = 500;
+            this.Height = 380;
+            this.StartPosition = FormStartPosition.CenterScreen;
+            this.BackColor = ThemeConfig.Colors.BackgroundMain;
+            this.Font = ThemeConfig.Fonts.DefaultFont;
+
+            // Titre
+            Label lblTitle = new Label
+            {
+                Text = "📝 Attribution de Notes",
+                Left = 20,
+                Top = 20,
+                Width = 400,
+                AutoSize = true
+            };
+            ThemeConfig.StyleLabelTitle(lblTitle);
+            this.Controls.Add(lblTitle);
+
+            // GroupBox pour l'enregistrement de notes
+            GroupBox gbNotes = new GroupBox
+            {
+                Text = "Informations de la Note",
+                Left = 20,
+                Top = 60,
+                Width = 450,
+                Height = 220
+            };
+            ThemeConfig.StyleGroupBox(gbNotes);
+
+            // Étudiant
+            Label lblEtudiant = new Label { Text = "Étudiant :", Left = 20, Top = 35, Width = 100, AutoSize = true };
+            lblEtudiant.Font = ThemeConfig.Fonts.DefaultFont;
+            cmbEtudiants.Left = 140;
+            cmbEtudiants.Top = 32;
+            cmbEtudiants.Width = 280;
+            cmbEtudiants.Font = ThemeConfig.Fonts.DefaultFont;
+            cmbEtudiants.DropDownStyle = ComboBoxStyle.DropDownList;
+
+            // Charger les étudiants
+            foreach (Etudiant etudiant in gestionCentre.Etudiants)
+            {
+                cmbEtudiants.Items.Add(etudiant);
+            }
+
+            // Module
+            Label lblModule = new Label { Text = "Module :", Left = 20, Top = 75, Width = 100, AutoSize = true };
+            lblModule.Font = ThemeConfig.Fonts.DefaultFont;
+            cmbModules.Left = 140;
+            cmbModules.Top = 72;
+            cmbModules.Width = 280;
+            cmbModules.Font = ThemeConfig.Fonts.DefaultFont;
+            cmbModules.DropDownStyle = ComboBoxStyle.DropDownList;
+
+            // Charger les modules
+            foreach (Module module in gestionCentre.Modules)
+            {
+                cmbModules.Items.Add(module);
+            }
+
+            // Note
+            Label lblNote = new Label { Text = "Note (0-20) :", Left = 20, Top = 115, Width = 100, AutoSize = true };
+            lblNote.Font = ThemeConfig.Fonts.DefaultFont;
+            nudNote.Left = 140;
+            nudNote.Top = 112;
+            nudNote.Width = 280;
+            nudNote.Font = ThemeConfig.Fonts.DefaultFont;
+            nudNote.Minimum = 0;
+            nudNote.Maximum = 20;
+
+            gbNotes.Controls.Add(lblEtudiant);
+            gbNotes.Controls.Add(cmbEtudiants);
+            gbNotes.Controls.Add(lblModule);
+            gbNotes.Controls.Add(cmbModules);
+            gbNotes.Controls.Add(lblNote);
+            gbNotes.Controls.Add(nudNote);
+            this.Controls.Add(gbNotes);
+
+            // Boutons
+            Button btnAjouter = new Button { Text = "✓ Enregistrer la Note", Left = 130, Top = 305, Width = 150 };
+            ThemeConfig.StyleButtonSuccess(btnAjouter);
+            btnAjouter.Click += btnAjouterNote_Click;
+
+            Button btnAnnuler = new Button { Text = "✕ Annuler", Left = 300, Top = 305, Width = 150 };
+            ThemeConfig.StyleButtonSecondary(btnAnnuler);
+            btnAnnuler.Click += (s, e) => this.Close();
+
+            this.Controls.Add(btnAjouter);
+            this.Controls.Add(btnAnnuler);
+        }
+
+        private void btnAjouterNote_Click(object? sender, EventArgs e)
+        {
+            try
+            {
+                // Validation de la sélection de l'étudiant
+                if (cmbEtudiants.SelectedItem == null)
+                {
+                    Toast.ShowWarning("Veuillez sélectionner un étudiant");
+                    cmbEtudiants.Focus();
+                    return;
+                }
+
+                // Validation de la sélection du module
+                if (cmbModules.SelectedItem == null)
+                {
+                    Toast.ShowWarning("Veuillez sélectionner un module");
+                    cmbModules.Focus();
+                    return;
+                }
+
+                // Validation de la note
+                if (nudNote.Value < 0 || nudNote.Value > 20)
+                {
+                    Toast.ShowWarning("La note doit être entre 0 et 20");
+                    nudNote.Focus();
+                    return;
+                }
+
+                Etudiant etudiantChoisi = (Etudiant)cmbEtudiants.SelectedItem;
+                Module moduleChoisi = (Module)cmbModules.SelectedItem;
+
+                Note note = new Note(
+                    etudiantChoisi,
+                    moduleChoisi,
+                    (double)nudNote.Value
+                );
+
+                gestionCentre.AjouterNote(note);
+
+                Toast.ShowSuccess($"Note {(int)nudNote.Value}/20 enregistrée pour {etudiantChoisi.Nom}");
+
+                // Réinitialiser les champs
+                cmbEtudiants.SelectedIndex = -1;
+                cmbModules.SelectedIndex = -1;
+                nudNote.Value = 0;
+                cmbEtudiants.Focus();
+            }
+            catch (Exception ex)
+            {
+                Toast.ShowError($"Erreur: {ex.Message}");
+            }
+        }
+    }
+}

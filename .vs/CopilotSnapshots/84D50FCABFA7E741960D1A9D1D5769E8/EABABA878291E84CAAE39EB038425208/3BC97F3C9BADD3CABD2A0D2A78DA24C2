@@ -1,0 +1,114 @@
+﻿using System;
+using System.Windows.Forms;
+using CentreFormation.Services;
+using CentreFormation.Models;
+
+namespace CentreFormation.Forms
+{
+    public partial class FormAjoutEtudiant : Form
+    {
+        private GestionCentre _gestion;
+        public Etudiant EtudiantCree { get; private set; }
+
+        // Minimal controls used by the handlers (placeholders)
+        private TextBox txtNom = new TextBox();
+        private TextBox txtPrenom = new TextBox();
+        private NumericUpDown nudAge = new NumericUpDown();
+        private TextBox txtMatricule = new TextBox();
+        private ComboBox cboNiveau = new ComboBox();
+
+        public FormAjoutEtudiant(GestionCentre gestion)
+        {
+            _gestion = gestion;
+            InitializeComponent();
+        }
+
+        private void InitializeComponent()
+        {
+            // Setup form
+            this.Text = "Ajouter un étudiant";
+            this.Width = 400;
+            this.Height = 350;
+            this.StartPosition = FormStartPosition.CenterScreen;
+
+            // Labels and controls
+            Label lblNom = new Label { Text = "Nom :", Left = 10, Top = 20, Width = 80 };
+            txtNom.Left = 100;
+            txtNom.Top = 20;
+            txtNom.Width = 250;
+
+            Label lblPrenom = new Label { Text = "Prénom :", Left = 10, Top = 50, Width = 80 };
+            txtPrenom.Left = 100;
+            txtPrenom.Top = 50;
+            txtPrenom.Width = 250;
+
+            Label lblAge = new Label { Text = "Âge :", Left = 10, Top = 80, Width = 80 };
+            nudAge.Left = 100;
+            nudAge.Top = 80;
+            nudAge.Width = 250;
+
+            Label lblMatricule = new Label { Text = "Matricule :", Left = 10, Top = 110, Width = 80 };
+            txtMatricule.Left = 100;
+            txtMatricule.Top = 110;
+            txtMatricule.Width = 250;
+
+            Label lblNiveau = new Label { Text = "Niveau :", Left = 10, Top = 140, Width = 80 };
+            cboNiveau.Left = 100;
+            cboNiveau.Top = 140;
+            cboNiveau.Width = 250;
+            cboNiveau.Items.AddRange(new string[] { "L1", "L2", "L3", "M1", "M2" });
+
+            // Buttons
+            Button btnValider = new Button { Text = "Valider", Left = 100, Top = 240, Width = 100 };
+            btnValider.Click += btnValider_Click;
+
+            Button btnAnnuler = new Button { Text = "Annuler", Left = 210, Top = 240, Width = 100 };
+            btnAnnuler.Click += btnAnnuler_Click;
+
+            // Add controls to form
+            this.Controls.Add(lblNom);
+            this.Controls.Add(txtNom);
+            this.Controls.Add(lblPrenom);
+            this.Controls.Add(txtPrenom);
+            this.Controls.Add(lblAge);
+            this.Controls.Add(nudAge);
+            this.Controls.Add(lblMatricule);
+            this.Controls.Add(txtMatricule);
+            this.Controls.Add(lblNiveau);
+            this.Controls.Add(cboNiveau);
+            this.Controls.Add(btnValider);
+            this.Controls.Add(btnAnnuler);
+        }
+
+        private void btnValider_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Etudiant nouvelEtudiant = new Etudiant(
+                    (_gestion != null) ? (_gestion.Etudiants.Count > 0 ? _gestion.Etudiants.Count + 1 : 1) : 0,
+                    txtNom.Text,
+                    txtPrenom.Text,
+                    (int)nudAge.Value,
+                    txtMatricule.Text,
+                    cboNiveau.SelectedItem != null ? cboNiveau.SelectedItem.ToString() : string.Empty
+                );
+
+                _gestion?.AjouterEtudiant(nouvelEtudiant);
+                EtudiantCree = nouvelEtudiant;
+
+                DialogResult = DialogResult.OK;
+                Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btnAnnuler_Click(object sender, EventArgs e)
+        {
+            DialogResult = DialogResult.Cancel;
+            Close();
+        }
+    }
+}

@@ -1,0 +1,39 @@
+﻿private GestionCentre _gestion;
+public Etudiant EtudiantCree { get; private set; }
+
+public FormAjoutEtudiant(GestionCentre gestion)
+{
+    InitializeComponent();
+    _gestion = gestion;
+}
+
+private void btnValider_Click(object sender, EventArgs e)
+{
+    try
+    {
+        Etudiant nouvelEtudiant = new Etudiant(
+            _gestion.NouvelIdEtudiant(), // génère un Id automatiquement
+            txtNom.Text,
+            txtPrenom.Text,
+            (int)nudAge.Value,
+            txtMatricule.Text,
+            cboNiveau.SelectedItem.ToString()
+        );
+
+        _gestion.AjouterEtudiant(nouvelEtudiant);
+        EtudiantCree = nouvelEtudiant;
+
+        DialogResult = DialogResult.OK;
+        Close();
+    }
+    catch (Exception ex)
+    {
+        MessageBox.Show(ex.Message, "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+    }
+}
+
+private void btnAnnuler_Click(object sender, EventArgs e)
+{
+    DialogResult = DialogResult.Cancel;
+    Close();
+}

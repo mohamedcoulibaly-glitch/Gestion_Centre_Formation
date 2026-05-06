@@ -1,0 +1,57 @@
+﻿// Placeholder: logique applicative GestionCentre
+using System.Collections.Generic;
+using System.Linq;
+using CentreFormation.Models;
+
+namespace CentreFormation.Services
+{
+    public class GestionCentre
+    {
+        public List<Etudiant> Etudiants { get; set; }
+        public List<Formateur> Formateurs { get; set; }
+        public List<Module> Modules { get; set; }
+        public List<Note> Notes { get; set; }
+
+        public GestionCentre()
+        {
+            Etudiants = Sauvegarde.ChargerEtudiants();
+            Formateurs = Sauvegarde.ChargerFormateurs();
+            Modules = Sauvegarde.ChargerModules();
+            Notes = Sauvegarde.ChargerNotes(Etudiants, Modules);
+        }
+
+        public void AjouterFormateur(Formateur formateur)
+        {
+            Formateurs.Add(formateur);
+            Sauvegarde.SauvegarderFormateurs(Formateurs);
+        }
+
+        public void AjouterModule(Module module)
+        {
+            Modules.Add(module);
+            Sauvegarde.SauvegarderModules(Modules);
+        }
+
+        public void AjouterNote(Note note)
+        {
+            Notes.Add(note);
+            Sauvegarde.SauvegarderNotes(Notes);
+        }
+
+        public double MoyenneGenerale()
+        {
+            if (Etudiants.Count == 0)
+                return 0;
+
+            return Etudiants.Average(e => e.CalculerMoyenne());
+        }
+
+        public Etudiant MeilleurEtudiant()
+        {
+            if (Etudiants.Count == 0)
+                return null;
+
+            return Etudiants.OrderByDescending(e => e.CalculerMoyenne()).FirstOrDefault();
+        }
+    }
+}

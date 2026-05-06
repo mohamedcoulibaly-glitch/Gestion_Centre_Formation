@@ -1,0 +1,13 @@
+﻿[
+  {
+    "EtudiantId": 1,
+    "ModuleCode": "MOD001",
+    "Valeur": 15
+  },
+  {
+    "EtudiantId": 1,
+    "ModuleCode": "MOD002",
+    "Valeur": 18
+    "Valeur": 18
+  }
+]

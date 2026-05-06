@@ -1,0 +1,18 @@
+﻿// Placeholder: FormStatistiques
+private void FormStatistiques_Load(object sender, EventArgs e)
+{
+    lblNbEtudiants.Text = "Nombre d'étudiants : " + gestionCentre.Etudiants.Count;
+    lblNbFormateurs.Text = "Nombre de formateurs : " + gestionCentre.Formateurs.Count;
+    lblNbModules.Text = "Nombre de modules : " + Module.NombreModules;
+
+    lblMoyenneGenerale.Text = "Moyenne générale : " + gestionCentre.MoyenneGenerale().ToString("0.00");
+
+    Etudiant meilleur = gestionCentre.MeilleurEtudiant();
+
+    if (meilleur != null)
+    {
+        lblMeilleurEtudiant.Text = "Meilleur étudiant : " +
+                                    meilleur.Nom + " " + meilleur.Prenom +
+                                    " - Moyenne : " + meilleur.CalculerMoyenne().ToString("0.00");
+    }
+}

@@ -1,0 +1,25 @@
+﻿// Placeholder: FormAjoutFormateur
+private void btnValider_Click(object sender, EventArgs e)
+{
+    try
+    {
+        Formateur nouveauFormateur = new Formateur(
+            int.Parse(txtId.Text),
+            txtNom.Text,
+            txtPrenom.Text,
+            (int)nudAge.Value,
+            txtSpecialite.Text,
+            txtModule.Text,
+            nudSalaire.Value
+        );
+
+        FormateurCree = nouveauFormateur;
+
+        DialogResult = DialogResult.OK;
+        Close();
+    }
+    catch (Exception ex)
+    {
+        MessageBox.Show(ex.Message, "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+    }
+}

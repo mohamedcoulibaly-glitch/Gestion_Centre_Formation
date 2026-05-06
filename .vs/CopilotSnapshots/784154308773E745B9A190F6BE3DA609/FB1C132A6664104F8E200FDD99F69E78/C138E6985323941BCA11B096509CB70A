@@ -1,0 +1,47 @@
+﻿// Placeholder: classe métier 'Formateur'
+using System;
+
+namespace CentreFormation.Models
+{
+    public class Formateur : Personne
+    {
+        private decimal _salaire;
+
+        public string Specialite { get; set; }
+        public string ModuleEnseigne { get; set; }
+
+        public decimal Salaire
+        {
+            get { return _salaire; }
+            set
+            {
+                if (value <= 0)
+                {
+                    throw new ArgumentException("Le salaire doit être supérieur à 0.");
+                }
+
+                _salaire = value;
+            }
+        }
+
+        public Formateur(int id, string nom, string prenom, int age,
+                          string specialite, string moduleEnseigne, decimal salaire)
+            : base(id, nom, prenom, age)
+        {
+            Specialite = specialite;
+            ModuleEnseigne = moduleEnseigne;
+            Salaire = salaire;
+        }
+
+        public decimal CalculerSalaireAnnuel()
+        {
+            return Salaire * 12;
+        }
+
+        public override string AfficherDetails()
+        {
+            return base.AfficherDetails() +
+                   $" - Spécialité : {Specialite} - Module : {ModuleEnseigne} - Salaire : {Salaire}";
+        }
+    }
+}

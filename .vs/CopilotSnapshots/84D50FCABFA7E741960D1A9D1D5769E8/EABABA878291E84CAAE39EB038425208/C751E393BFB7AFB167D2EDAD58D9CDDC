@@ -1,0 +1,85 @@
+﻿using System;
+using System.Windows.Forms;
+using CentreFormation.Models;
+
+namespace CentreFormation.Forms
+{
+    public partial class FormAjoutModule : Form
+    {
+        public Module ModuleCree { get; private set; }
+
+        // Placeholder controls
+        private TextBox txtCode = new TextBox();
+        private TextBox txtLibelle = new TextBox();
+        private NumericUpDown nudDuree = new NumericUpDown();
+        private NumericUpDown nudCoefficient = new NumericUpDown();
+
+        public FormAjoutModule()
+        {
+            InitializeComponent();
+        }
+
+        private void InitializeComponent()
+        {
+            this.Text = "Ajouter un module";
+            this.Width = 400;
+            this.Height = 280;
+            this.StartPosition = FormStartPosition.CenterScreen;
+
+            Label lblCode = new Label { Text = "Code :", Left = 10, Top = 20, Width = 80 };
+            txtCode.Left = 100;
+            txtCode.Top = 20;
+            txtCode.Width = 250;
+
+            Label lblLibelle = new Label { Text = "Libellé :", Left = 10, Top = 50, Width = 80 };
+            txtLibelle.Left = 100;
+            txtLibelle.Top = 50;
+            txtLibelle.Width = 250;
+
+            Label lblDuree = new Label { Text = "Durée :", Left = 10, Top = 80, Width = 80 };
+            nudDuree.Left = 100;
+            nudDuree.Top = 80;
+            nudDuree.Width = 250;
+
+            Label lblCoefficient = new Label { Text = "Coefficient :", Left = 10, Top = 110, Width = 80 };
+            nudCoefficient.Left = 100;
+            nudCoefficient.Top = 110;
+            nudCoefficient.Width = 250;
+
+            Button btnValider = new Button { Text = "Valider", Left = 100, Top = 180, Width = 100 };
+            btnValider.Click += btnValider_Click;
+
+            this.Controls.Add(lblCode);
+            this.Controls.Add(txtCode);
+            this.Controls.Add(lblLibelle);
+            this.Controls.Add(txtLibelle);
+            this.Controls.Add(lblDuree);
+            this.Controls.Add(nudDuree);
+            this.Controls.Add(lblCoefficient);
+            this.Controls.Add(nudCoefficient);
+            this.Controls.Add(btnValider);
+        }
+
+        private void btnValider_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Module nouveauModule = new Module(
+                    txtCode.Text,
+                    txtLibelle.Text,
+                    (int)nudDuree.Value,
+                    (int)nudCoefficient.Value
+                );
+
+                ModuleCree = nouveauModule;
+
+                DialogResult = DialogResult.OK;
+                Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+    }
+}

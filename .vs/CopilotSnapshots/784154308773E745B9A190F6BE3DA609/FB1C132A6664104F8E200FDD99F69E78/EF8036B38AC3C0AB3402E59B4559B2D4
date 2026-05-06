@@ -1,0 +1,50 @@
+﻿
+using System;
+// Placeholder: classe métier 'Module'
+
+namespace CentreFormation.Models
+{
+    public class Module
+    {
+        public override string ToString()
+        {
+            return $"{Libelle} ({Code})";
+        }
+        private int _duree;
+        private static int _nombreModules = 0;
+
+        public string Code { get; set; }
+        public string Libelle { get; set; }
+
+        public int Duree
+        {
+            get { return _duree; }
+            set
+            {
+                if (value <= 0)
+                {
+                    throw new ArgumentException("La durée doit être supérieure à 0.");
+                }
+
+                _duree = value;
+            }
+        }
+
+        public int Coefficient { get; set; }
+
+        public static int NombreModules
+        {
+            get { return _nombreModules; }
+        }
+
+        public Module(string code, string libelle, int duree, int coefficient)
+        {
+            Code = code;
+            Libelle = libelle;
+            Duree = duree;
+            Coefficient = coefficient;
+
+            _nombreModules++;
+        }
+    }
+}

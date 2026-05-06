@@ -1,0 +1,55 @@
+﻿using System;
+using System.Windows.Forms;
+using CentreFormation.Models;
+
+namespace CentreFormation.Forms
+{
+    public partial class FormAjoutFormateur : Form
+    {
+        public Formateur FormateurCree { get; private set; }
+
+        // Placeholder controls
+        private TextBox txtId = new TextBox();
+        private TextBox txtNom = new TextBox();
+        private TextBox txtPrenom = new TextBox();
+        private NumericUpDown nudAge = new NumericUpDown();
+        private TextBox txtSpecialite = new TextBox();
+        private TextBox txtModule = new TextBox();
+        private NumericUpDown nudSalaire = new NumericUpDown();
+
+        public FormAjoutFormateur()
+        {
+            InitializeComponent();
+        }
+
+        private void InitializeComponent()
+        {
+            this.Text = "Ajouter un formateur";
+        }
+
+        private void btnValider_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Formateur nouveauFormateur = new Formateur(
+                    int.Parse(txtId.Text),
+                    txtNom.Text,
+                    txtPrenom.Text,
+                    (int)nudAge.Value,
+                    txtSpecialite.Text,
+                    txtModule.Text,
+                    nudSalaire.Value
+                );
+
+                FormateurCree = nouveauFormateur;
+
+                DialogResult = DialogResult.OK;
+                Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+    }
+}

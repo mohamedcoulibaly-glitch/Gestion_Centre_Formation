@@ -1,0 +1,136 @@
+﻿// Placeholder: sauvegarde/lecture fichiers JSON
+using System.Collections.Generic;
+using System.IO;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using CentreFormation.Models;
+using System.Linq;
+
+namespace CentreFormation.Services
+{
+    public static class Sauvegarde
+    {
+        private static string cheminFormateurs = "Data/formateurs.json";
+        private static string cheminModules = "Data/modules.json";
+        private static string cheminEtudiants = "Data/etudiants.json";
+        private static string cheminNotes = "Data/notes.json";
+
+        private static readonly JsonSerializerOptions _options = new JsonSerializerOptions
+        {
+            WriteIndented = true,
+            PropertyNameCaseInsensitive = true,
+        };
+
+        public static void SauvegarderFormateurs(List<Formateur> liste)
+        {
+            string json = JsonSerializer.Serialize(liste, _options);
+            File.WriteAllText(cheminFormateurs, json);
+        }
+
+        public static List<Formateur> ChargerFormateurs()
+        {
+            if (!File.Exists(cheminFormateurs))
+                return new List<Formateur>();
+
+            string json = File.ReadAllText(cheminFormateurs);
+
+            return JsonSerializer.Deserialize<List<Formateur>>(json, _options)
+                   ?? new List<Formateur>();
+        }
+
+        public static void SauvegarderModules(List<Module> liste)
+        {
+            string json = JsonSerializer.Serialize(liste, _options);
+            File.WriteAllText(cheminModules, json);
+        }
+
+        public static List<Module> ChargerModules()
+        {
+            if (!File.Exists(cheminModules))
+                return new List<Module>();
+
+            string json = File.ReadAllText(cheminModules);
+
+            return JsonSerializer.Deserialize<List<Module>>(json, _options)
+                   ?? new List<Module>();
+        }
+
+        public static void SauvegarderEtudiants(List<Etudiant> liste)
+        {
+            string json = JsonSerializer.Serialize(liste, _options);
+            File.WriteAllText(cheminEtudiants, json);
+        }
+
+        public static List<Etudiant> ChargerEtudiants()
+        {
+            if (!File.Exists(cheminEtudiants))
+                return new List<Etudiant>();
+
+            string json = File.ReadAllText(cheminEtudiants);
+
+            return JsonSerializer.Deserialize<List<Etudiant>>(json, _options)
+                   ?? new List<Etudiant>();
+        }
+
+        // DTO for notes in JSON
+        private class NoteDto
+        {
+            public int EtudiantId { get; set; }
+            public string ModuleCode { get; set; }
+            public double Valeur { get; set; }
+        }
+
+        public static void SauvegarderNotes(List<Note> notes)
+        {
+            var dtos = notes.Select(n => new NoteDto
+            {
+                EtudiantId = n.Etudiant?.Id ?? 0,
+                ModuleCode = n.Module?.Code ?? string.Empty,
+                Valeur = n.Valeur
+            }).ToList();
+
+            string json = JsonSerializer.Serialize(dtos, _options);
+            File.WriteAllText(cheminNotes, json);
+        }
+
+        public static List<Note> ChargerNotes(List<Etudiant> etudiants, List<Module> modules)
+        {
+            if (!File.Exists(cheminNotes))
+                return new List<Note>();
+
+            string json = File.ReadAllText(cheminNotes);
+
+            List<NoteDto> dtos;
+            try
+            {
+                dtos = JsonSerializer.Deserialize<List<NoteDto>>(json, _options) ?? new List<NoteDto>();
+            }
+            catch
+            {
+                return new List<Note>();
+            }
+
+            var notes = new List<Note>();
+
+            foreach (var dto in dtos)
+            {
+                var et = etudiants.FirstOrDefault(e => e.Id == dto.EtudiantId);
+                var mod = modules.FirstOrDefault(m => m.Code == dto.ModuleCode);
+                if (et != null && mod != null)
+                {
+                    try
+                    {
+                        notes.Add(new Note(et, mod, dto.Valeur));
+                        et.AjouterNote(notes.Last());
+                    }
+                    catch
+                    {
+                        // ignore invalid note values
+                    }
+                }
+            }
+
+            return notes;
+        }
+    }
+}

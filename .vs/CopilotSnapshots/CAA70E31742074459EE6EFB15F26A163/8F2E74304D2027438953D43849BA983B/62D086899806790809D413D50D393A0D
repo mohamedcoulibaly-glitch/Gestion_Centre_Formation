@@ -1,0 +1,718 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows.Forms;
+using CentreFormation.Services;
+using CentreFormation.Forms;
+using CentreFormation.UI;
+using CentreFormation.Models;
+using System.Drawing;
+
+namespace CentreFormation.Forms
+{
+    public partial class FormMain : Form
+    {
+        // Objet principal qui contient toutes les données
+        private GestionCentre _gestionCentre = new GestionCentre();
+        private Panel _sidebarPanel;
+        private Panel _titleBarPanel;
+        private TabControl _tabControl;
+
+        // Références aux DataGridView pour refresh
+        private DataGridView _dgvEtudiants;
+        private DataGridView _dgvFormateurs;
+        private DataGridView _dgvModules;
+
+        public FormMain()
+        {
+            InitializeComponent();
+            ApplyModernTheme();
+        }
+
+        private void InitializeComponent()
+        {
+            // Configuration de la fenêtre
+            this.Text = "Gestion Centre Formation";
+            this.Width = 1200;
+            this.Height = 700;
+            this.StartPosition = FormStartPosition.CenterScreen;
+            this.FormBorderStyle = FormBorderStyle.None;
+            this.BackColor = ThemeConfig.Colors.BackgroundMain;
+
+            // Barre de titre personnalisée
+            CreateTitleBar();
+
+            // Panneau latéral de navigation (Sidebar)
+            CreateSidebar();
+
+            // Panneau principal avec TabControl
+            CreateMainContent();
+        }
+
+        private void CreateTitleBar()
+        {
+            _titleBarPanel = new Panel
+            {
+                BackColor = ThemeConfig.Colors.Primary,
+                Height = 60,
+                Dock = DockStyle.Top
+            };
+
+            Label titleLabel = new Label
+            {
+                Text = "🏫 Gestion Centre Formation",
+                ForeColor = ThemeConfig.Colors.TextLight,
+                Font = ThemeConfig.Fonts.TitleFont,
+                Left = 20,
+                Top = 18,
+                AutoSize = true
+            };
+            _titleBarPanel.Controls.Add(titleLabel);
+
+            // Bouton Fermer
+            Button closeBtn = new Button
+            {
+                Text = "✕",
+                BackColor = ThemeConfig.Colors.Primary,
+                ForeColor = ThemeConfig.Colors.TextLight,
+                FlatStyle = FlatStyle.Flat,
+                FlatAppearance = { BorderSize = 0 },
+                Width = 50,
+                Height = 60,
+                Dock = DockStyle.Right,
+                Cursor = Cursors.Hand,
+                Font = new Font("Arial", 14, FontStyle.Bold)
+            };
+            closeBtn.Click += (s, e) => this.Close();
+            closeBtn.MouseEnter += (s, e) => closeBtn.BackColor = Color.FromArgb(200, ThemeConfig.Colors.Primary.R, ThemeConfig.Colors.Primary.G, ThemeConfig.Colors.Primary.B);
+            closeBtn.MouseLeave += (s, e) => closeBtn.BackColor = ThemeConfig.Colors.Primary;
+            _titleBarPanel.Controls.Add(closeBtn);
+
+            this.Controls.Add(_titleBarPanel);
+        }
+
+        private void CreateSidebar()
+        {
+            _sidebarPanel = new Panel
+            {
+                BackColor = ThemeConfig.Colors.SidebarDark,
+                Width = 220,
+                Dock = DockStyle.Left
+            };
+
+            // Titre du sidebar
+            Label sidebarTitle = new Label
+            {
+                Text = "📋 MENU",
+                ForeColor = ThemeConfig.Colors.TextLight,
+                Font = ThemeConfig.Fonts.BoldFont,
+                Left = 20,
+                Top = 20,
+                AutoSize = true
+            };
+            _sidebarPanel.Controls.Add(sidebarTitle);
+
+            // Boutons de navigation
+            int btnY = 70;
+            const int btnHeight = 45;
+            const int spacing = 10;
+
+            Button btnEtudiants = CreateSidebarButton("👥 Étudiants", 20, btnY, "etudiants");
+            btnEtudiants.Click += (s, e) => _tabControl.SelectedIndex = 0;
+            _sidebarPanel.Controls.Add(btnEtudiants);
+            btnY += btnHeight + spacing;
+
+            Button btnFormateurs = CreateSidebarButton("👨‍🏫 Formateurs", 20, btnY, "formateurs");
+            btnFormateurs.Click += (s, e) => _tabControl.SelectedIndex = 1;
+            _sidebarPanel.Controls.Add(btnFormateurs);
+            btnY += btnHeight + spacing;
+
+            Button btnModules = CreateSidebarButton("📚 Modules", 20, btnY, "modules");
+            btnModules.Click += (s, e) => _tabControl.SelectedIndex = 2;
+            _sidebarPanel.Controls.Add(btnModules);
+            btnY += btnHeight + spacing;
+
+            Button btnNotes = CreateSidebarButton("📝 Notes", 20, btnY, "notes");
+            btnNotes.Click += (s, e) => _tabControl.SelectedIndex = 3;
+            _sidebarPanel.Controls.Add(btnNotes);
+            btnY += btnHeight + spacing;
+
+            Button btnStats = CreateSidebarButton("📊 Statistiques", 20, btnY, "stats");
+            btnStats.Click += (s, e) => _tabControl.SelectedIndex = 4;
+            _sidebarPanel.Controls.Add(btnStats);
+
+            this.Controls.Add(_sidebarPanel);
+        }
+
+        private void CreateMainContent()
+        {
+            _tabControl = new TabControl
+            {
+                Dock = DockStyle.Fill,
+                ItemSize = new Size(0, 1),  // Masquer les onglets (on utilise le sidebar)
+                Multiline = false
+            };
+
+            // Onglet 1: Étudiants
+            _tabControl.TabPages.Add(CreateStudentsTab());
+
+            // Onglet 2: Formateurs
+            _tabControl.TabPages.Add(CreateTrainersTab());
+
+            // Onglet 3: Modules
+            _tabControl.TabPages.Add(CreateModulesTab());
+
+            // Onglet 4: Notes
+            _tabControl.TabPages.Add(CreateGradesTab());
+
+            // Onglet 5: Statistiques
+            _tabControl.TabPages.Add(CreateStatsTab());
+
+            this.Controls.Add(_tabControl);
+        }
+
+        private TabPage CreateStudentsTab()
+        {
+            TabPage tab = new TabPage { BackColor = ThemeConfig.Colors.BackgroundMain };
+
+            // Top bar avec actions
+            Panel topBar = new Panel
+            {
+                Height = 70,
+                Dock = DockStyle.Top,
+                BackColor = ThemeConfig.Colors.CardBackground,
+                BorderStyle = BorderStyle.FixedSingle
+            };
+
+            Label lblTitle = new Label
+            {
+                Text = "📚 Liste des Étudiants",
+                Font = ThemeConfig.Fonts.TitleFont,
+                ForeColor = ThemeConfig.Colors.TextDark,
+                Left = 20,
+                Top = 12,
+                AutoSize = true
+            };
+            topBar.Controls.Add(lblTitle);
+
+            RoundedButton btnAddStudent = new RoundedButton
+            {
+                Text = "➕ Ajouter Étudiant",
+                NormalColor = ThemeConfig.Colors.Success,
+                HoverColor = ThemeConfig.Colors.SuccessHover,
+                Width = 150,
+                Height = 40,
+                Left = 20,
+                Top = 40
+            };
+            btnAddStudent.Click += (s, e) =>
+            {
+                FormAjoutEtudiant form = new FormAjoutEtudiant(_gestionCentre);
+                if (form.ShowDialog() == DialogResult.OK)
+                {
+                    RefreshStudentsDataGrid();
+                }
+            };
+            topBar.Controls.Add(btnAddStudent);
+
+            RoundedButton btnDeleteStudent = new RoundedButton
+            {
+                Text = "🗑️ Supprimer",
+                NormalColor = ThemeConfig.Colors.Error,
+                HoverColor = ThemeConfig.Colors.ErrorHover,
+                Width = 120,
+                Height = 40,
+                Left = 180,
+                Top = 40
+            };
+            btnDeleteStudent.Click += (s, e) => DeleteSelectedStudent();
+            topBar.Controls.Add(btnDeleteStudent);
+
+            tab.Controls.Add(topBar);
+
+            // Barre de recherche
+            Panel searchBar = CreateSearchBar("Rechercher étudiant par nom ou niveau...", (searchTerm) =>
+            {
+                if (string.IsNullOrWhiteSpace(searchTerm))
+                {
+                    RefreshStudentsDataGrid();
+                }
+                else
+                {
+                    var filtered = _gestionCentre.Etudiants
+                        .Where(e => e.Nom.ToLower().Contains(searchTerm.ToLower()) ||
+                                   e.Prenom.ToLower().Contains(searchTerm.ToLower()) ||
+                                   e.Niveau.ToLower().Contains(searchTerm.ToLower()))
+                        .ToList();
+                    PopulateStudentsDataGrid(filtered);
+                }
+            });
+            searchBar.Height = 50;
+            searchBar.Dock = DockStyle.Top;
+            tab.Controls.Add(searchBar);
+
+            // DataGridView
+            _dgvEtudiants = new DataGridView
+            {
+                Dock = DockStyle.Fill,
+                AutoGenerateColumns = false,
+                AllowUserToAddRows = false,
+                AllowUserToDeleteRows = false,
+                ReadOnly = true,
+                BackgroundColor = ThemeConfig.Colors.CardBackground
+            };
+
+            // Colonnes
+            _dgvEtudiants.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Id", HeaderText = "ID", Width = 60 });
+            _dgvEtudiants.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Nom", HeaderText = "Nom", Width = 120 });
+            _dgvEtudiants.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Prenom", HeaderText = "Prénom", Width = 120 });
+            _dgvEtudiants.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Age", HeaderText = "Âge", Width = 60 });
+            _dgvEtudiants.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Matricule", HeaderText = "Matricule", Width = 100 });
+            _dgvEtudiants.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Niveau", HeaderText = "Niveau", Width = 100 });
+
+            // Appliquer le style moderne
+            ThemeConfig.StyleDataGridView(_dgvEtudiants);
+
+            // Double-click pour éditer
+            _dgvEtudiants.DoubleClick += (s, e) =>
+            {
+                if (_dgvEtudiants.CurrentRow != null)
+                {
+                    int id = (int)_dgvEtudiants.CurrentRow.Cells[0].Value;
+                    var student = _gestionCentre.Etudiants.FirstOrDefault(x => x.Id == id);
+                    if (student != null)
+                    {
+                        FormAjoutEtudiant form = new FormAjoutEtudiant(_gestionCentre, student);
+                        if (form.ShowDialog() == DialogResult.OK)
+                        {
+                            RefreshStudentsDataGrid();
+                        }
+                    }
+                }
+            };
+
+            tab.Controls.Add(_dgvEtudiants);
+
+            // Charger les données au démarrage
+            RefreshStudentsDataGrid();
+
+            return tab;
+        }
+
+        private TabPage CreateTrainersTab()
+        {
+            TabPage tab = new TabPage { BackColor = ThemeConfig.Colors.BackgroundMain };
+
+            Panel topBar = new Panel
+            {
+                Height = 70,
+                Dock = DockStyle.Top,
+                BackColor = ThemeConfig.Colors.CardBackground,
+                BorderStyle = BorderStyle.FixedSingle
+            };
+
+            Label lblTitle = new Label
+            {
+                Text = "👨‍🏫 Liste des Formateurs",
+                Font = ThemeConfig.Fonts.TitleFont,
+                ForeColor = ThemeConfig.Colors.TextDark,
+                Left = 20,
+                Top = 12,
+                AutoSize = true
+            };
+            topBar.Controls.Add(lblTitle);
+
+            RoundedButton btnAddTrainer = new RoundedButton
+            {
+                Text = "➕ Ajouter Formateur",
+                NormalColor = ThemeConfig.Colors.Success,
+                HoverColor = ThemeConfig.Colors.SuccessHover,
+                Width = 170,
+                Height = 40,
+                Left = 20,
+                Top = 40
+            };
+            btnAddTrainer.Click += (s, e) =>
+            {
+                FormAjoutFormateur form = new FormAjoutFormateur(_gestionCentre);
+                if (form.ShowDialog() == DialogResult.OK)
+                {
+                    RefreshTrainersDataGrid();
+                }
+            };
+            topBar.Controls.Add(btnAddTrainer);
+
+            tab.Controls.Add(topBar);
+
+            Panel searchBar = CreateSearchBar("Rechercher formateur...", (searchTerm) =>
+            {
+                if (string.IsNullOrWhiteSpace(searchTerm))
+                {
+                    RefreshTrainersDataGrid();
+                }
+                else
+                {
+                    var filtered = _gestionCentre.Formateurs
+                        .Where(f => f.Nom.ToLower().Contains(searchTerm.ToLower()) ||
+                                   f.Prenom.ToLower().Contains(searchTerm.ToLower()))
+                        .ToList();
+                    PopulateTrainersDataGrid(filtered);
+                }
+            });
+            searchBar.Height = 50;
+            searchBar.Dock = DockStyle.Top;
+            tab.Controls.Add(searchBar);
+
+            _dgvFormateurs = new DataGridView
+            {
+                Dock = DockStyle.Fill,
+                AutoGenerateColumns = false,
+                AllowUserToAddRows = false,
+                ReadOnly = true
+            };
+
+            _dgvFormateurs.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Id", HeaderText = "ID", Width = 60 });
+            _dgvFormateurs.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Nom", HeaderText = "Nom", Width = 120 });
+            _dgvFormateurs.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Prenom", HeaderText = "Prénom", Width = 120 });
+            _dgvFormateurs.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Age", HeaderText = "Âge", Width = 60 });
+            _dgvFormateurs.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Specialite", HeaderText = "Spécialité", Width = 150 });
+            _dgvFormateurs.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Salaire", HeaderText = "Salaire", Width = 100 });
+
+            ThemeConfig.StyleDataGridView(_dgvFormateurs);
+            tab.Controls.Add(_dgvFormateurs);
+
+            RefreshTrainersDataGrid();
+            return tab;
+        }
+
+        private TabPage CreateModulesTab()
+        {
+            TabPage tab = new TabPage { BackColor = ThemeConfig.Colors.BackgroundMain };
+
+            Panel topBar = new Panel
+            {
+                Height = 70,
+                Dock = DockStyle.Top,
+                BackColor = ThemeConfig.Colors.CardBackground,
+                BorderStyle = BorderStyle.FixedSingle
+            };
+
+            Label lblTitle = new Label
+            {
+                Text = "📚 Liste des Modules",
+                Font = ThemeConfig.Fonts.TitleFont,
+                ForeColor = ThemeConfig.Colors.TextDark,
+                Left = 20,
+                Top = 12,
+                AutoSize = true
+            };
+            topBar.Controls.Add(lblTitle);
+
+            RoundedButton btnAddModule = new RoundedButton
+            {
+                Text = "➕ Ajouter Module",
+                NormalColor = ThemeConfig.Colors.Success,
+                HoverColor = ThemeConfig.Colors.SuccessHover,
+                Width = 150,
+                Height = 40,
+                Left = 20,
+                Top = 40
+            };
+            btnAddModule.Click += (s, e) =>
+            {
+                FormAjoutModule form = new FormAjoutModule(_gestionCentre);
+                if (form.ShowDialog() == DialogResult.OK)
+                {
+                    RefreshModulesDataGrid();
+                }
+            };
+            topBar.Controls.Add(btnAddModule);
+
+            tab.Controls.Add(topBar);
+
+            Panel searchBar = CreateSearchBar("Rechercher module...", (searchTerm) =>
+            {
+                if (string.IsNullOrWhiteSpace(searchTerm))
+                {
+                    RefreshModulesDataGrid();
+                }
+                else
+                {
+                    var filtered = _gestionCentre.Modules
+                        .Where(m => m.Libelle.ToLower().Contains(searchTerm.ToLower()) ||
+                                   m.Code.ToLower().Contains(searchTerm.ToLower()))
+                        .ToList();
+                    PopulateModulesDataGrid(filtered);
+                }
+            });
+            searchBar.Height = 50;
+            searchBar.Dock = DockStyle.Top;
+            tab.Controls.Add(searchBar);
+
+            _dgvModules = new DataGridView
+            {
+                Dock = DockStyle.Fill,
+                AutoGenerateColumns = false,
+                AllowUserToAddRows = false,
+                ReadOnly = true
+            };
+
+            _dgvModules.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Code", HeaderText = "Code", Width = 100 });
+            _dgvModules.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Libelle", HeaderText = "Libellé", Width = 250 });
+            _dgvModules.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Duree", HeaderText = "Durée (h)", Width = 80 });
+            _dgvModules.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Coefficient", HeaderText = "Coefficient", Width = 100 });
+
+            ThemeConfig.StyleDataGridView(_dgvModules);
+            tab.Controls.Add(_dgvModules);
+
+            RefreshModulesDataGrid();
+            return tab;
+        }
+
+        private TabPage CreateGradesTab()
+        {
+            TabPage tab = new TabPage { BackColor = ThemeConfig.Colors.BackgroundMain };
+
+            Panel topBar = new Panel
+            {
+                Height = 70,
+                Dock = DockStyle.Top,
+                BackColor = ThemeConfig.Colors.CardBackground,
+                BorderStyle = BorderStyle.FixedSingle
+            };
+
+            Label lblTitle = new Label
+            {
+                Text = "📝 Gestion des Notes",
+                Font = ThemeConfig.Fonts.TitleFont,
+                ForeColor = ThemeConfig.Colors.TextDark,
+                Left = 20,
+                Top = 12,
+                AutoSize = true
+            };
+            topBar.Controls.Add(lblTitle);
+
+            RoundedButton btnAddGrade = new RoundedButton
+            {
+                Text = "➕ Ajouter Note",
+                NormalColor = ThemeConfig.Colors.Success,
+                HoverColor = ThemeConfig.Colors.SuccessHover,
+                Width = 140,
+                Height = 40,
+                Left = 20,
+                Top = 40
+            };
+            btnAddGrade.Click += (s, e) =>
+            {
+                FormNotes form = new FormNotes(_gestionCentre);
+                if (form.ShowDialog() == DialogResult.OK)
+                {
+                    // Refresh notes table
+                }
+            };
+            topBar.Controls.Add(btnAddGrade);
+
+            tab.Controls.Add(topBar);
+
+            Label lblNotes = new Label
+            {
+                Text = "Veuillez utiliser le formulaire 'Ajouter Note' pour gérer les notes des étudiants.",
+                Font = ThemeConfig.Fonts.DefaultFont,
+                ForeColor = ThemeConfig.Colors.TextSecondary,
+                Left = 20,
+                Top = 130,
+                AutoSize = true
+            };
+            tab.Controls.Add(lblNotes);
+
+            return tab;
+        }
+
+        private TabPage CreateStatsTab()
+        {
+            TabPage tab = new TabPage { BackColor = ThemeConfig.Colors.BackgroundMain };
+
+            Panel topBar = new Panel
+            {
+                Height = 70,
+                Dock = DockStyle.Top,
+                BackColor = ThemeConfig.Colors.CardBackground,
+                BorderStyle = BorderStyle.FixedSingle
+            };
+
+            Label lblTitle = new Label
+            {
+                Text = "📊 Statistiques",
+                Font = ThemeConfig.Fonts.TitleFont,
+                ForeColor = ThemeConfig.Colors.TextDark,
+                Left = 20,
+                Top = 12,
+                AutoSize = true
+            };
+            topBar.Controls.Add(lblTitle);
+
+            tab.Controls.Add(topBar);
+
+            RoundedButton btnViewStats = new RoundedButton
+            {
+                Text = "📊 Voir Statistiques Complètes",
+                NormalColor = ThemeConfig.Colors.Secondary,
+                HoverColor = ThemeConfig.Colors.Primary,
+                Width = 220,
+                Height = 40,
+                Left = 20,
+                Top = 90
+            };
+            btnViewStats.Click += (s, e) =>
+            {
+                FormStatistiques form = new FormStatistiques(_gestionCentre);
+                form.ShowDialog();
+            };
+            tab.Controls.Add(btnViewStats);
+
+            return tab;
+        }
+
+        private Panel CreateSearchBar(string placeholder, Action<string> onSearch)
+        {
+            Panel searchPanel = new Panel
+            {
+                BackColor = ThemeConfig.Colors.CardBackground,
+                Padding = new Padding(15)
+            };
+
+            TextBox txtSearch = new TextBox
+            {
+                PlaceholderText = "🔍 " + placeholder,
+                Width = 400,
+                Height = 35,
+                Font = ThemeConfig.Fonts.DefaultFont,
+                Left = 20,
+                Top = 10
+            };
+            ThemeConfig.StyleTextBox(txtSearch);
+
+            txtSearch.TextChanged += (s, e) => onSearch?.Invoke(txtSearch.Text);
+
+            searchPanel.Controls.Add(txtSearch);
+            return searchPanel;
+        }
+
+        private void RefreshStudentsDataGrid()
+        {
+            PopulateStudentsDataGrid(_gestionCentre.Etudiants);
+        }
+
+        private void PopulateStudentsDataGrid(List<Etudiant> students)
+        {
+            _dgvEtudiants.DataSource = null;
+            _dgvEtudiants.DataSource = students.Select(e => new
+            {
+                e.Id,
+                e.Nom,
+                e.Prenom,
+                e.Age,
+                e.Matricule,
+                e.Niveau
+            }).ToList();
+        }
+
+        private void RefreshTrainersDataGrid()
+        {
+            PopulateTrainersDataGrid(_gestionCentre.Formateurs);
+        }
+
+        private void PopulateTrainersDataGrid(List<Formateur> trainers)
+        {
+            _dgvFormateurs.DataSource = null;
+            _dgvFormateurs.DataSource = trainers.Select(f => new
+            {
+                f.Id,
+                f.Nom,
+                f.Prenom,
+                f.Age,
+                f.Specialite,
+                Salaire = f.Salaire.ToString("C")
+            }).ToList();
+        }
+
+        private void RefreshModulesDataGrid()
+        {
+            PopulateModulesDataGrid(_gestionCentre.Modules);
+        }
+
+        private void PopulateModulesDataGrid(List<Module> modules)
+        {
+            _dgvModules.DataSource = null;
+            _dgvModules.DataSource = modules.Select(m => new
+            {
+                m.Code,
+                m.Libelle,
+                m.Duree,
+                m.Coefficient
+            }).ToList();
+        }
+
+        private void DeleteSelectedStudent()
+        {
+            if (_dgvEtudiants.CurrentRow == null)
+            {
+                Toast.ShowWarning("Veuillez sélectionner un étudiant à supprimer");
+                return;
+            }
+
+            int id = (int)_dgvEtudiants.CurrentRow.Cells[0].Value;
+            var student = _gestionCentre.Etudiants.FirstOrDefault(x => x.Id == id);
+
+            if (student != null)
+            {
+                var result = MessageBox.Show(
+                    $"Êtes-vous sûr de vouloir supprimer '{student.Nom} {student.Prenom}' ?\n\nCette action est irréversible.",
+                    "⚠️ Confirmation de suppression",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning,
+                    MessageBoxDefaultButton.Button2);
+
+                if (result == DialogResult.Yes)
+                {
+                    _gestionCentre.Etudiants.Remove(student);
+                    Sauvegarde.SauvegarderEtudiants(_gestionCentre.Etudiants);
+                    Toast.ShowSuccess($"Étudiant '{student.Nom}' supprimé avec succès");
+                    RefreshStudentsDataGrid();
+                }
+            }
+        }
+
+        private Button CreateSidebarButton(string text, int left, int top, string tag)
+        {
+            Button btn = new Button
+            {
+                Text = text,
+                Left = left,
+                Top = top,
+                Width = 180,
+                Height = 45,
+                BackColor = ThemeConfig.Colors.SidebarDark,
+                ForeColor = ThemeConfig.Colors.TextLight,
+                FlatStyle = FlatStyle.Flat,
+                FlatAppearance = { BorderSize = 0 },
+                Font = ThemeConfig.Fonts.BoldFont,
+                Cursor = Cursors.Hand,
+                TextAlign = ContentAlignment.MiddleLeft,
+                Padding = new Padding(15, 0, 0, 0),
+                Tag = tag
+            };
+
+            btn.MouseEnter += (s, e) => btn.BackColor = ThemeConfig.Colors.Primary;
+            btn.MouseLeave += (s, e) => btn.BackColor = ThemeConfig.Colors.SidebarDark;
+
+            return btn;
+        }
+
+        private void ApplyModernTheme()
+        {
+            this.BackColor = ThemeConfig.Colors.BackgroundMain;
+            this.Font = ThemeConfig.Fonts.DefaultFont;
+        }
+    }
+}

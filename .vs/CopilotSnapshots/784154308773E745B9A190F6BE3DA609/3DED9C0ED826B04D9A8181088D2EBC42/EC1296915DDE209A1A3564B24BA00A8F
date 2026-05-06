@@ -1,0 +1,167 @@
+﻿using System;
+using System.Windows.Forms;
+using CentreFormation.Services;
+using System.Drawing;
+using CentreFormation.Models;
+using CentreFormation.UI;
+
+namespace CentreFormation.Forms
+{
+    public partial class FormAjoutModule : Form
+    {
+        private GestionCentre _gestion;
+        public Module ModuleCree { get; private set; }
+
+        // Placeholder controls
+        private TextBox txtCode = new TextBox();
+        private TextBox txtLibelle = new TextBox();
+        private NumericUpDown nudDuree = new NumericUpDown();
+        private NumericUpDown nudCoefficient = new NumericUpDown();
+
+        public FormAjoutModule(GestionCentre gestion)
+        {
+            _gestion = gestion;
+            InitializeComponent();
+        }
+
+        private void InitializeComponent()
+        {
+            this.Text = "Ajouter un module";
+            this.Width = 500;
+            this.Height = 400;
+            this.StartPosition = FormStartPosition.CenterScreen;
+            this.BackColor = ThemeConfig.Colors.BackgroundMain;
+            this.Font = ThemeConfig.Fonts.DefaultFont;
+
+            // Titre
+            Label lblTitle = new Label
+            {
+                Text = "Créer un Nouveau Module",
+                Left = 20,
+                Top = 20,
+                Width = 400,
+                AutoSize = true
+            };
+            ThemeConfig.StyleLabelTitle(lblTitle);
+            this.Controls.Add(lblTitle);
+
+            // GroupBox pour les informations du module
+            GroupBox gbModule = new GroupBox
+            {
+                Text = "Informations du Module",
+                Left = 20,
+                Top = 60,
+                Width = 450,
+                Height = 220
+            };
+            ThemeConfig.StyleGroupBox(gbModule);
+
+            // Code
+            Label lblCode = new Label { Text = "Code :", Left = 20, Top = 35, Width = 80, AutoSize = true };
+            lblCode.Font = ThemeConfig.Fonts.DefaultFont;
+            txtCode.Left = 130;
+            txtCode.Top = 32;
+            txtCode.Width = 280;
+            ThemeConfig.StyleTextBox(txtCode);
+
+            // Libellé
+            Label lblLibelle = new Label { Text = "Libellé :", Left = 20, Top = 75, Width = 80, AutoSize = true };
+            lblLibelle.Font = ThemeConfig.Fonts.DefaultFont;
+            txtLibelle.Left = 130;
+            txtLibelle.Top = 72;
+            txtLibelle.Width = 280;
+            ThemeConfig.StyleTextBox(txtLibelle);
+
+            // Durée
+            Label lblDuree = new Label { Text = "Durée (h) :", Left = 20, Top = 115, Width = 80, AutoSize = true };
+            lblDuree.Font = ThemeConfig.Fonts.DefaultFont;
+            nudDuree.Left = 130;
+            nudDuree.Top = 112;
+            nudDuree.Width = 280;
+            nudDuree.Font = ThemeConfig.Fonts.DefaultFont;
+
+            // Coefficient
+            Label lblCoefficient = new Label { Text = "Coefficient :", Left = 20, Top = 155, Width = 80, AutoSize = true };
+            lblCoefficient.Font = ThemeConfig.Fonts.DefaultFont;
+            nudCoefficient.Left = 130;
+            nudCoefficient.Top = 152;
+            nudCoefficient.Width = 280;
+            nudCoefficient.Font = ThemeConfig.Fonts.DefaultFont;
+
+            gbModule.Controls.Add(lblCode);
+            gbModule.Controls.Add(txtCode);
+            gbModule.Controls.Add(lblLibelle);
+            gbModule.Controls.Add(txtLibelle);
+            gbModule.Controls.Add(lblDuree);
+            gbModule.Controls.Add(nudDuree);
+            gbModule.Controls.Add(lblCoefficient);
+            gbModule.Controls.Add(nudCoefficient);
+            this.Controls.Add(gbModule);
+
+            // Boutons
+            Button btnValider = new Button { Text = "✓ Créer le Module", Left = 130, Top = 305, Width = 150 };
+            ThemeConfig.StyleButtonSuccess(btnValider);
+            btnValider.Click += btnValider_Click;
+
+            Button btnAnnuler = new Button { Text = "✕ Annuler", Left = 300, Top = 305, Width = 150 };
+            ThemeConfig.StyleButtonSecondary(btnAnnuler);
+            btnAnnuler.Click += (s, e) => this.Close();
+
+            this.Controls.Add(btnValider);
+            this.Controls.Add(btnAnnuler);
+        }
+
+        private void btnValider_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // Validation du code
+                if (string.IsNullOrWhiteSpace(txtCode.Text))
+                {
+                    HighlightError(txtCode, "Le code ne peut pas être vide");
+                    return;
+                }
+
+                // Validation du libellé
+                if (string.IsNullOrWhiteSpace(txtLibelle.Text))
+                {
+                    HighlightError(txtLibelle, "Le libellé ne peut pas être vide");
+                    return;
+                }
+
+                // Validation de la durée
+                if (nudDuree.Value <= 0)
+                {
+                    HighlightError(nudDuree, "La durée doit être positive");
+                    return;
+                }
+
+                Module nouveauModule = new Module(
+                    txtCode.Text,
+                    txtLibelle.Text,
+                    (int)nudDuree.Value,
+                    (int)nudCoefficient.Value
+                );
+
+                _gestion.AjouterModule(nouveauModule);
+                ModuleCree = nouveauModule;
+
+                MessageBox.Show("Module créé avec succès !", "Succès", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                DialogResult = DialogResult.OK;
+                Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void HighlightError(Control control, string message)
+        {
+            control.BackColor = ThemeConfig.Colors.Warning;
+            MessageBox.Show(message, "Validation", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            control.BackColor = Color.White;
+            control.Focus();
+        }
+    }
+}

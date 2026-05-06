@@ -1,0 +1,49 @@
+﻿// Placeholder: sauvegarde/lecture fichiers JSON
+using System.Collections.Generic;
+using System.IO;
+using Newtonsoft.Json;
+using CentreFormation.Models;
+using System.Linq;
+
+namespace CentreFormation.Services
+{
+    public static class Sauvegarde
+    {
+        private static string cheminFormateurs = "Data/formateurs.json";
+        private static string cheminModules = "Data/modules.json";
+
+        public static void SauvegarderFormateurs(List<Formateur> liste)
+        {
+            string json = JsonConvert.SerializeObject(liste, Formatting.Indented);
+            File.WriteAllText(cheminFormateurs, json);
+        }
+
+        public static List<Formateur> ChargerFormateurs()
+        {
+            if (!File.Exists(cheminFormateurs))
+                return new List<Formateur>();
+
+            string json = File.ReadAllText(cheminFormateurs);
+
+            return JsonConvert.DeserializeObject<List<Formateur>>(json)
+                   ?? new List<Formateur>();
+        }
+
+        public static void SauvegarderModules(List<Module> liste)
+        {
+            string json = JsonConvert.SerializeObject(liste, Formatting.Indented);
+            File.WriteAllText(cheminModules, json);
+        }
+
+        public static List<Module> ChargerModules()
+        {
+            if (!File.Exists(cheminModules))
+                return new List<Module>();
+
+            string json = File.ReadAllText(cheminModules);
+
+            return JsonConvert.DeserializeObject<List<Module>>(json)
+                   ?? new List<Module>();
+        }
+    }
+}

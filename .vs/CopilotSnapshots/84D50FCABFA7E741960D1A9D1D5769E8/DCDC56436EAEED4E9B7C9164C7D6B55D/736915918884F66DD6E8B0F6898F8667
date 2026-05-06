@@ -1,0 +1,23 @@
+﻿// Placeholder: FormNotes
+private void btnAjouterNote_Click(object sender, EventArgs e)
+{
+    try
+    {
+        Etudiant etudiantChoisi = (Etudiant)cmbEtudiants.SelectedItem;
+        Module moduleChoisi = (Module)cmbModules.SelectedItem;
+
+        Note note = new Note(
+            etudiantChoisi,
+            moduleChoisi,
+            (double)nudNote.Value
+        );
+
+        gestionCentre.AjouterNote(note);
+
+        MessageBox.Show("Note ajoutée avec succès.");
+    }
+    catch (Exception ex)
+    {
+        MessageBox.Show(ex.Message);
+    }
+}

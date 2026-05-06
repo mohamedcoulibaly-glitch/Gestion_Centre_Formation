@@ -1,0 +1,3 @@
+﻿// Placeholder: FormMain
+// Objet principal qui contient toutes les données
+private GestionCentre gestionCentre = new GestionC

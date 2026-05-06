@@ -1,0 +1,85 @@
+﻿using System;
+using System.Windows.Forms;
+using CentreFormation.Services;
+using CentreFormation.Forms;
+
+namespace CentreFormation.Forms
+{
+    public partial class FormMain : Form
+    {
+        // Objet principal qui contient toutes les données
+        private GestionCentre gestionCentre = new GestionCentre();
+
+        public FormMain()
+        {
+            InitializeComponent();
+        }
+
+        private void InitializeComponent()
+        {
+            this.Text = "Gestion Centre Formation";
+            this.Width = 600;
+            this.Height = 400;
+            this.StartPosition = FormStartPosition.CenterScreen;
+
+            MenuStrip menu = new MenuStrip();
+
+            // Étudiants menu
+            ToolStripMenuItem menuEtudiants = new ToolStripMenuItem("Étudiants");
+            ToolStripMenuItem ajouterEtudiant = new ToolStripMenuItem("Ajouter");
+            ajouterEtudiant.Click += (s, e) => 
+            {
+                FormAjoutEtudiant form = new FormAjoutEtudiant(gestionCentre);
+                form.ShowDialog();
+            };
+            menuEtudiants.DropDownItems.Add(ajouterEtudiant);
+
+            // Formateurs menu
+            ToolStripMenuItem menuFormateurs = new ToolStripMenuItem("Formateurs");
+            ToolStripMenuItem ajouterFormateur = new ToolStripMenuItem("Ajouter");
+            ajouterFormateur.Click += (s, e) => 
+            {
+                FormAjoutFormateur form = new FormAjoutFormateur();
+                form.ShowDialog();
+            };
+            menuFormateurs.DropDownItems.Add(ajouterFormateur);
+
+            // Modules menu
+            ToolStripMenuItem menuModules = new ToolStripMenuItem("Modules");
+            ToolStripMenuItem ajouterModule = new ToolStripMenuItem("Ajouter");
+            ajouterModule.Click += (s, e) => 
+            {
+                FormAjoutModule form = new FormAjoutModule();
+                form.ShowDialog();
+            };
+            menuModules.DropDownItems.Add(ajouterModule);
+
+            // Notes menu
+            ToolStripMenuItem menuNotes = new ToolStripMenuItem("Notes");
+            ToolStripMenuItem ajouterNote = new ToolStripMenuItem("Ajouter");
+            ajouterNote.Click += (s, e) => 
+            {
+                FormNotes form = new FormNotes(gestionCentre);
+                form.ShowDialog();
+            };
+            menuNotes.DropDownItems.Add(ajouterNote);
+
+            // Statistiques menu
+            ToolStripMenuItem menuStatistiques = new ToolStripMenuItem("Statistiques");
+            menuStatistiques.Click += (s, e) => 
+            {
+                FormStatistiques form = new FormStatistiques(gestionCentre);
+                form.ShowDialog();
+            };
+
+            menu.Items.Add(menuEtudiants);
+            menu.Items.Add(menuFormateurs);
+            menu.Items.Add(menuModules);
+            menu.Items.Add(menuNotes);
+            menu.Items.Add(menuStatistiques);
+
+            this.MainMenuStrip = menu;
+            this.Controls.Add(menu);
+        }
+    }
+}

@@ -1,0 +1,89 @@
+﻿// Placeholder: classe métier 'Etudiant'
+using CentreFormation.Models;
+
+namespace CentreFormation.Models
+{
+    public class Etudiant : Personne  // hérite de Personne
+    {
+        // ============================================
+        // CHAMPS PRIVÉS
+        // ============================================
+        private string _matricule;
+        private string _niveau;
+        private List<Note> _notes;
+
+        // ============================================
+        // CONSTRUCTEUR
+        // ============================================
+        public Etudiant(int id, string nom, string prenom, int age, string matricule, string niveau)
+            : base(id, nom, prenom, age)  // appelle le constructeur de Personne
+        {
+            Matricule = matricule;
+            Niveau    = niveau;
+            _notes    = new List<Note>(); // liste vide au départ
+        }
+
+        // ============================================
+        // PROPRIÉTÉS
+        // ============================================
+        public string Matricule
+        {
+            get => _matricule;
+            set
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                    throw new ArgumentException("Le matricule ne peut pas être vide.");
+                _matricule = value;
+            }
+        }
+
+        public string Niveau
+        {
+            get => _niveau;
+            set
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                    throw new ArgumentException("Le niveau ne peut pas être vide.");
+                _niveau = value;
+            }
+        }
+
+        public List<Note> Notes => _notes; // lecture seule de l'extérieur
+
+        // ============================================
+        // MÉTHODES
+        // ============================================
+
+        // Ajouter une note à la liste
+        public void AjouterNote(Note note)
+        {
+            _notes.Add(note);
+        }
+
+        // Calculer la moyenne pondérée par les coefficients
+        public double CalculerMoyenne()
+        {
+            if (_notes.Count == 0) return 0;
+
+            double totalPoints      = 0;
+            double totalCoefficient = 0;
+
+            foreach (Note note in _notes)
+            {
+                totalPoints      += note.Valeur * note.Module.Coefficient;
+                totalCoefficient += note.Module.Coefficient;
+            }
+
+            if (totalCoefficient == 0) return 0;
+
+            return Math.Round(totalPoints / totalCoefficient, 2);
+        }
+
+        // Redéfinir AfficherDetails() de Personne
+        public override string AfficherDetails()
+        {
+            return base.AfficherDetails() 
+                + $" | Matricule: {_matricule} | Niveau: {_niveau} | Moyenne: {CalculerMoyenne()}/20";
+        }
+    }
+}

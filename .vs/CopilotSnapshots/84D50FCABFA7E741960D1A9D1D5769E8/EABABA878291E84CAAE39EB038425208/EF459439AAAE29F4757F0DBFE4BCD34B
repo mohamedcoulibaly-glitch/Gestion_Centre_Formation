@@ -1,0 +1,83 @@
+﻿using System;
+using System.Windows.Forms;
+using CentreFormation.Services;
+using CentreFormation.Models;
+
+namespace CentreFormation.Forms
+{
+    public partial class FormStatistiques : Form
+    {
+        private GestionCentre gestionCentre;
+
+        // Placeholder labels
+        private Label lblNbEtudiants = new Label();
+        private Label lblNbFormateurs = new Label();
+        private Label lblNbModules = new Label();
+        private Label lblMoyenneGenerale = new Label();
+        private Label lblMeilleurEtudiant = new Label();
+
+        public FormStatistiques(GestionCentre gestion)
+        {
+            gestionCentre = gestion;
+            InitializeComponent();
+        }
+
+        private void InitializeComponent()
+        {
+            this.Text = "Statistiques";
+            this.Width = 500;
+            this.Height = 300;
+            this.StartPosition = FormStartPosition.CenterScreen;
+
+            lblNbEtudiants.Left = 20;
+            lblNbEtudiants.Top = 20;
+            lblNbEtudiants.Width = 400;
+            lblNbEtudiants.AutoSize = true;
+
+            lblNbFormateurs.Left = 20;
+            lblNbFormateurs.Top = 50;
+            lblNbFormateurs.Width = 400;
+            lblNbFormateurs.AutoSize = true;
+
+            lblNbModules.Left = 20;
+            lblNbModules.Top = 80;
+            lblNbModules.Width = 400;
+            lblNbModules.AutoSize = true;
+
+            lblMoyenneGenerale.Left = 20;
+            lblMoyenneGenerale.Top = 110;
+            lblMoyenneGenerale.Width = 400;
+            lblMoyenneGenerale.AutoSize = true;
+
+            lblMeilleurEtudiant.Left = 20;
+            lblMeilleurEtudiant.Top = 140;
+            lblMeilleurEtudiant.Width = 400;
+            lblMeilleurEtudiant.AutoSize = true;
+
+            this.Controls.Add(lblNbEtudiants);
+            this.Controls.Add(lblNbFormateurs);
+            this.Controls.Add(lblNbModules);
+            this.Controls.Add(lblMoyenneGenerale);
+            this.Controls.Add(lblMeilleurEtudiant);
+            this.Load += FormStatistiques_Load;
+        }
+
+        private void FormStatistiques_Load(object sender, EventArgs e)
+        {
+            lblNbEtudiants.Text = "Nombre d'étudiants : " + gestionCentre.Etudiants.Count;
+            lblNbFormateurs.Text = "Nombre de formateurs : " + gestionCentre.Formateurs.Count;
+            lblNbModules.Text = "Nombre de modules : " + Module.NombreModules;
+
+            lblMoyenneGenerale.Text = "Moyenne générale : " + gestionCentre.MoyenneGenerale().ToString("0.00");
+
+            Etudiant meilleur = gestionCentre.MeilleurEtudiant();
+
+            if (meilleur != null)
+            {
+                lblMeilleurEtudiant.Text = "Meilleur étudiant : " +
+                                            meilleur.Nom + " " + meilleur.Prenom +
+                                            " - Moyenne : " + meilleur.CalculerMoyenne().ToString("0.00");
+            }
+        }
+    }
+}
