@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CentreFormation")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+23d7fcc5674364687f3c33117c092588293f6d43")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3f443d9295d5674cca792cec5900d452097cf56e")]
 [assembly: System.Reflection.AssemblyProductAttribute("CentreFormation")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CentreFormation")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

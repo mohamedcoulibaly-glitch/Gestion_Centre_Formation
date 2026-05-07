@@ -63,6 +63,13 @@
       "Libelle": "R\u00E9seaux Informatiques",
       "Duree": 40,
       "Coefficient": 2
+    },
+    {
+      "$id": "11",
+      "Code": "105",
+      "Libelle": "C#",
+      "Duree": 30,
+      "Coefficient": 1
     }
   ]
 }
