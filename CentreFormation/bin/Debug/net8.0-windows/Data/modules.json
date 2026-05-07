@@ -1,0 +1,68 @@
+{
+  "$id": "1",
+  "$values": [
+    {
+      "$id": "2",
+      "Code": "MOD001",
+      "Libelle": "HTML CSS",
+      "Duree": 40,
+      "Coefficient": 2
+    },
+    {
+      "$id": "3",
+      "Code": "MOD002",
+      "Libelle": "SQL Server",
+      "Duree": 30,
+      "Coefficient": 3
+    },
+    {
+      "$id": "4",
+      "Code": "101",
+      "Libelle": "Algorithmique et structure de donee",
+      "Duree": 30,
+      "Coefficient": 1
+    },
+    {
+      "$id": "5",
+      "Code": "102",
+      "Libelle": "Programmation",
+      "Duree": 30,
+      "Coefficient": 1
+    },
+    {
+      "$id": "6",
+      "Code": "MOD003",
+      "Libelle": "JavaScript Avanc\u00E9",
+      "Duree": 45,
+      "Coefficient": 2
+    },
+    {
+      "$id": "7",
+      "Code": "103",
+      "Libelle": "Architecture des Ordinateurs",
+      "Duree": 25,
+      "Coefficient": 1
+    },
+    {
+      "$id": "8",
+      "Code": "MOD004",
+      "Libelle": "Analyse et Conception (UML)",
+      "Duree": 35,
+      "Coefficient": 3
+    },
+    {
+      "$id": "9",
+      "Code": "104",
+      "Libelle": "Syst\u00E8mes d\u0027Exploitation",
+      "Duree": 30,
+      "Coefficient": 2
+    },
+    {
+      "$id": "10",
+      "Code": "MOD005",
+      "Libelle": "R\u00E9seaux Informatiques",
+      "Duree": 40,
+      "Coefficient": 2
+    }
+  ]
+}

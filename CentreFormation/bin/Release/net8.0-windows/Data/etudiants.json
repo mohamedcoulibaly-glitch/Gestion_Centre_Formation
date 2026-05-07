@@ -1,0 +1,122 @@
+{
+  "$id": "1",
+  "$values": [
+    {
+      "$id": "2",
+      "Matricule": "ETU001",
+      "Niveau": "L2",
+      "Id": 1,
+      "Nom": "Diallo",
+      "Prenom": "Fatou",
+      "Age": 22
+    },
+    {
+      "$id": "3",
+      "Matricule": "ETU002",
+      "Niveau": "L3",
+      "Id": 2,
+      "Nom": "Sow",
+      "Prenom": "Ibrahima",
+      "Age": 24
+    },
+    {
+      "$id": "4",
+      "Matricule": "ETU003",
+      "Niveau": "L1",
+      "Id": 3,
+      "Nom": "Diop",
+      "Prenom": "Aminata",
+      "Age": 21
+    },
+    {
+      "$id": "5",
+      "Matricule": "250098",
+      "Niveau": "L1",
+      "Id": 4,
+      "Nom": "Sene",
+      "Prenom": "Babacar",
+      "Age": 20
+    },
+    {
+      "$id": "6",
+      "Matricule": "250073",
+      "Niveau": "L2",
+      "Id": 5,
+      "Nom": "Ndiaye",
+      "Prenom": "Ibrahima",
+      "Age": 18
+    },
+    {
+      "$id": "7",
+      "Matricule": "250074",
+      "Niveau": "L3",
+      "Id": 6,
+      "Nom": "Ba",
+      "Prenom": "Amadou",
+      "Age": 23
+    },
+    {
+      "$id": "8",
+      "Matricule": "250075",
+      "Niveau": "L1",
+      "Id": 7,
+      "Nom": "Fall",
+      "Prenom": "Moussa",
+      "Age": 19
+    },
+    {
+      "$id": "9",
+      "Matricule": "250076",
+      "Niveau": "L2",
+      "Id": 8,
+      "Nom": "Diop",
+      "Prenom": "Awa",
+      "Age": 21
+    },
+    {
+      "$id": "10",
+      "Matricule": "250077",
+      "Niveau": "L3",
+      "Id": 9,
+      "Nom": "Gueye",
+      "Prenom": "Ousmane",
+      "Age": 25
+    },
+    {
+      "$id": "11",
+      "Matricule": "250078",
+      "Niveau": "L1",
+      "Id": 10,
+      "Nom": "Kane",
+      "Prenom": "Mariama",
+      "Age": 18
+    },
+    {
+      "$id": "12",
+      "Matricule": "250079",
+      "Niveau": "L2",
+      "Id": 11,
+      "Nom": "Ciss\u00E9",
+      "Prenom": "Modou",
+      "Age": 22
+    },
+    {
+      "$id": "13",
+      "Matricule": "250091",
+      "Niveau": "L3",
+      "Id": 12,
+      "Nom": "Traore",
+      "Prenom": "Saliou",
+      "Age": 18
+    },
+    {
+      "$id": "14",
+      "Matricule": "250033",
+      "Niveau": "L2",
+      "Id": 13,
+      "Nom": "Sylla",
+      "Prenom": "Issa",
+      "Age": 0
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "$id": "1",
+  "$values": [
+    {
+      "$id": "2",
+      "EtudiantId": 1,
+      "ModuleCode": "MOD001",
+      "Valeur": 15
+    },
+    {
+      "$id": "3",
+      "EtudiantId": 1,
+      "ModuleCode": "MOD002",
+      "Valeur": 18
+    },
+    {
+      "$id": "4",
+      "EtudiantId": 4,
+      "ModuleCode": "MOD002",
+      "Valeur": 0
+    },
+    {
+      "$id": "5",
+      "EtudiantId": 4,
+      "ModuleCode": "MOD001",
+      "Valeur": 19
+    },
+    {
+      "$id": "6",
+      "EtudiantId": 5,
+      "ModuleCode": "101",
+      "Valeur": 14
+    },
+    {
+      "$id": "7",
+      "EtudiantId": 5,
+      "ModuleCode": "102",
+      "Valeur": 16
+    },
+    {
+      "$id": "8",
+      "EtudiantId": 2,
+      "ModuleCode": "MOD002",
+      "Valeur": 12
+    },
+    {
+      "$id": "9",
+      "EtudiantId": 2,
+      "ModuleCode": "MOD003",
+      "Valeur": 17
+    },
+    {
+      "$id": "10",
+      "EtudiantId": 3,
+      "ModuleCode": "101",
+      "Valeur": 11
+    },
+    {
+      "$id": "11",
+      "EtudiantId": 6,
+      "ModuleCode": "MOD004",
+      "Valeur": 13
+    },
+    {
+      "$id": "12",
+      "EtudiantId": 7,
+      "ModuleCode": "103",
+      "Valeur": 15
+    },
+    {
+      "$id": "13",
+      "EtudiantId": 9,
+      "ModuleCode": "102",
+      "Valeur": 14
+    },
+    {
+      "$id": "14",
+      "EtudiantId": 5,
+      "ModuleCode": "MOD001",
+      "Valeur": 20
+    },
+    {
+      "$id": "15",
+      "EtudiantId": 4,
+      "ModuleCode": "102",
+      "Valeur": 0
+    },
+    {
+      "$id": "16",
+      "EtudiantId": 4,
+      "ModuleCode": "MOD003",
+      "Valeur": 19
+    },
+    {
+      "$id": "17",
+      "EtudiantId": 4,
+      "ModuleCode": "MOD005",
+      "Valeur": 14
+    }
+  ]
+}

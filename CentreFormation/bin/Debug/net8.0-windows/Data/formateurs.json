@@ -1,0 +1,95 @@
+{
+  "$id": "1",
+  "$values": [
+    {
+      "$id": "2",
+      "Specialite": "D\u00E9veloppement Web",
+      "ModuleEnseigne": "HTML CSS",
+      "Salaire": 350000,
+      "Id": 1,
+      "Nom": "Diop",
+      "Prenom": "Mamadou",
+      "Age": 40
+    },
+    {
+      "$id": "3",
+      "Specialite": "Base de donn\u00E9es",
+      "ModuleEnseigne": "SQL Server",
+      "Salaire": 400000,
+      "Id": 2,
+      "Nom": "Sow",
+      "Prenom": "Aminata",
+      "Age": 35
+    },
+    {
+      "$id": "4",
+      "Specialite": "R\u00E9seaux",
+      "ModuleEnseigne": "Cisco CCNA",
+      "Salaire": 450000,
+      "Id": 3,
+      "Nom": "Ndiaye",
+      "Prenom": "Abdoulaye",
+      "Age": 45
+    },
+    {
+      "$id": "5",
+      "Specialite": "D\u00E9veloppement Mobile",
+      "ModuleEnseigne": "Flutter",
+      "Salaire": 380000,
+      "Id": 4,
+      "Nom": "Ciss\u00E9",
+      "Prenom": "Fatou",
+      "Age": 32
+    },
+    {
+      "$id": "6",
+      "Specialite": "Cybers\u00E9curit\u00E9",
+      "ModuleEnseigne": "S\u00E9curit\u00E9 R\u00E9seau",
+      "Salaire": 500000,
+      "Id": 5,
+      "Nom": "Keita",
+      "Prenom": "Moussa",
+      "Age": 29
+    },
+    {
+      "$id": "7",
+      "Specialite": "Intelligence Artificielle",
+      "ModuleEnseigne": "Python Data Science",
+      "Salaire": 420000,
+      "Id": 6,
+      "Nom": "Diallo",
+      "Prenom": "A\u00EFssatou",
+      "Age": 38
+    },
+    {
+      "$id": "8",
+      "Specialite": "Syst\u00E8mes d\u0027Information",
+      "ModuleEnseigne": "Analyse UML",
+      "Salaire": 370000,
+      "Id": 7,
+      "Nom": "Fall",
+      "Prenom": "Ousmane",
+      "Age": 42
+    },
+    {
+      "$id": "9",
+      "Specialite": "Cloud Computing",
+      "ModuleEnseigne": "Azure \u0026 AWS",
+      "Salaire": 479995,
+      "Id": 8,
+      "Nom": "Ba",
+      "Prenom": "Mari\u00E8me",
+      "Age": 31
+    },
+    {
+      "$id": "10",
+      "Specialite": "Systeme d\u0027information",
+      "ModuleEnseigne": "Pratique base de donnee ",
+      "Salaire": 1000000,
+      "Id": 9,
+      "Nom": "Samb",
+      "Prenom": "Kara",
+      "Age": 0
+    }
+  ]
+}
